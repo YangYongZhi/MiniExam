@@ -1,0 +1,64 @@
+<#include "../common/header.html">
+<#assign usertype="com.maiyoule.miniexam.ui.template.UserTypeNameTemplate"?new()>
+<#assign bankname="com.maiyoule.miniexam.ui.template.BankTemplate"?new()>
+<#assign userinfo="com.maiyoule.miniexam.ui.template.UserTemplate"?new()>
+<#assign papername="com.maiyoule.miniexam.ui.template.UserPaperTemplate"?new()>
+<div class="nav">当前位置：管理首页 &gt; 考试结果 &gt; 考试成绩 &gt; 修改考试成绩</div>
+<div class="contral"><input type="button" class="btn white" value="返回到列表" onclick="history.back(-1);"/></div>
+
+<form action="${basePath}/contral/results/score/update" method="post">
+	<input type="hidden" name="id" value="${exam.id}"/>
+	<input type="hidden" name="history" value="${history}"/>
+	<div class="tables table-reg">
+		<table class="changeColor" cellspacing="0" cellpadding="0" border="0" width="100%">
+			<tr>
+				
+				<td>准考号：</td>
+				<td>${exam.cardno }</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td>姓名：</td>
+				<td>${userinfo(exam.cardno)}</td>
+				<td>用户类型</td>
+				<td>${usertype(exam.utype)}</td>
+			</tr>
+			<tr>
+				<td>所在金融机构：</td>
+				<td>${bankname(exam.bankno)}</td>
+				<td>金融机构编码：</td>
+				<td>${exam.bankno}</td>
+			</tr>
+			
+			<tr>
+				<td>试卷：</td>
+				<td colspan="3">${papername(exam.utype)}</td>
+				
+			</tr>
+			<tr>
+				<td>成绩：</td>
+				<td colspan="3"><input type="text" name="score" value="${exam.score}"/></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td colspan="3"><input type="submit" value="保存" class="btn orange"/></td>
+			</tr>
+	    </table>
+	    <!-- 数据表格end -->
+    </div>
+</form>
+<script>
+$(function(){
+	$("form").ajaxForm({"dataType":"json","success":function(data){
+		if(data.status){
+			window.location.href=data.data;
+		}else{
+			jAlert(data.data,data.info);
+		}
+	},"error":function(){
+		jAlert('修改失败，请检查网络',"网络");
+	}});
+});
+</script>
+<#include "../common/footer.html">

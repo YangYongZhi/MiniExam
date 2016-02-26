@@ -1,0 +1,211 @@
+<#include "../common/header.html">
+<div class="nav">当前位置：管理首页 &gt; 考试管理 &gt; 考试用户 &gt; 同步考试用户</div>
+
+
+<div class="contral">注意：<strong><font color='red'>在同步完成之前请留在当前页面并不要点击其他功能，否则将会导致同步数据不完整！</font></strong>同步考试用户是考试系统与征信监管系统用户信息同步，同步时比较耗时，请耐心等待。</div>
+<div class="tables table-list">
+	<table class="changeColor" cellspacing="0" cellpadding="0" border="0" width="100%">
+		
+		<tr>
+			<td width="10%" align="right">考试系统人数：</td>
+			<td width="40%">${count}&nbsp;</td>
+			<td width="10%" align="right">任务状态：</td>
+			<td width="40%">
+				<span id="labelstatus">
+				
+					<#switch sync.status>
+						<#case 1>等待处理<#break>
+						<#case 2>正在处理<#break>
+						<#case 3>完成<#break>
+						<#case -1>没有用户<#break>
+						<#case -2>已取消<#break>
+						<#case -3>出现异常，处理失败<#break>
+					</#switch>
+				&nbsp;
+				</span>
+				
+			</td>
+		</tr>
+		<tr>
+			<td align="right">读取总数：</td>
+			<td id="labelcount">
+				${sync.total}
+				&nbsp;
+			</td>
+			<td align="right">已读取：</td>
+			<td>
+				<div id="labelread">
+					${sync.readed}&nbsp;
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td align="right">已完成：</td>
+			<td>
+				<div id="labelflish">
+				${sync.flished}&nbsp;
+				</div>
+			</td>
+			<td align="right">消息：</td>
+			<td>
+			
+				<span id="labelop">
+					<#switch sync.status>
+						<#case 1><a href="${basePath}/contral/users/cancel" onclick="return checkop(this);">取消</a><#break>
+						<#case 2><a href="${basePath}/contral/users/cancel" onclick="return checkop(this);">取消</a><#break>
+					</#switch>
+				&nbsp;
+				</span>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>&nbsp;</td>
+			<td colspan="3">
+			<form action="${basePath}/contral/users/pullusers" method="get">
+			<input type="submit" class="btn orange btnSubmit" value="立即同步"/>
+			</form>
+		</td>
+		</tr>
+	</table>
+		
+		
+		
+</div>
+					
+   	        
+<script type="text/javascript">
+	$(start);
+	
+	function start(){
+		hander=setInterval(function(){
+			$.post(
+				"${basePath}/contral/users/querystatus",
+				{},
+				function(data){
+					if(data.status){
+						var statuslabel="-";
+						
+						switch(data.data.status){
+						
+							case -3:
+								statuslabel="出现异常，处理失败";
+								$("#labelop").html('');
+								statusstop(hander);
+								break;
+							case -2:
+								statuslabel="取消";
+								$("#labelop").html('');
+								statusstop(hander);
+								break;
+							case -1:
+								statuslabel="没有用户";
+								$("#labelop").html('');
+								statusstop(hander);
+								break;
+							case 1:
+								statuslabel="等待处理";
+								$("#labelop").html('<a href="${basePath}/contral/users/cancel" onclick="return checkop(this);">取消</a>');
+								statusstart();
+								break;
+							case 2:
+								statuslabel="正在处理";
+								$("#labelop").html('<a href="${basePath}/contral/users/cancel" onclick="return checkop(this);">取消</a>');
+								statusstart();
+								break;
+							case 3:
+								statuslabel="完成";
+								$("#labelop").html('');
+								statusstop(hander);
+								break;
+								
+						}
+						$("#labelstatus").html(statuslabel);
+						$("#labelcount").html(data.data.total);
+						showflish(data.data.flished);
+						showread(data.data.readed);
+						
+					}else{
+						clearInterval(hander);
+					}
+				},
+				"json"
+			);
+		},2000);
+		
+		$("form").ajaxForm({
+			"beforeSubmit":function(){
+				var result=confirm("提醒：\r\n1.在同步完成之前请留在当前页面并不要点击其他功能，否则将会导致同步数据不完整！\r\n2.同步用户时较为耗时，通常需要几十秒到几分钟，同时请尽量不要在服务器上运行其它程序\r\n确认同步吗？");
+				if(result){
+					statusstart();
+				}
+				return result;
+			},
+			"dataType":"json",
+			"success":function(){
+				start();
+			},
+			"error":function(){
+				statusstop(hander);
+				jAlert("同步失败，请检查网络");
+			}
+		});
+		
+	}
+	
+	function statusstart(){
+		$(".btnSubmit").val("正在同步用户");
+		$(".btnSubmit").attr("disabled",true);
+	}
+	function statusstop(hander){
+		clearInterval(hander);
+		$(".btnSubmit").val("重新同步");
+		$(".btnSubmit").attr("disabled",false);
+	}
+	
+	function checkop(o){
+		var url=$(o).attr('href');
+		jConfirm('确定取消吗？',"取消",function(){
+			$.ajax({
+				"url":url,
+				"type":"post",
+				"dataType":"json",
+				"success":function(data){
+					if(data.status){
+						window.location.reload();
+					}else{
+						jAlert(data.data,data.info);
+					}
+				},
+				"error":function(){
+				}
+			});
+		});
+		return false;
+	}
+	var lastflish=0;
+	
+	function showflish(cur){
+		if(lastflish==cur){
+			return;
+		}
+		lastflish=cur;
+		$("#labelflish").fadeOut("fast",function(){
+			$(this).text(cur);
+			$(this).fadeIn("fast");
+		});	
+	}
+	var lastread=0;
+	function showread(cur){
+	if(lastread==cur){
+			return;
+		}
+		lastread=cur;
+		$("#labelread").fadeOut("fast",function(){
+			$(this).text(cur);
+			$(this).fadeIn("fast");
+		});
+	}
+</script>
+
+<#include "../common/footer.html">

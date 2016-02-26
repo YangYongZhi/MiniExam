@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3c.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>顶部</title>
+<link href="${basePath}/static/css/common.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="${basePath}/static/js/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="${basePath}/static/lhgdialog/lhgcore.lhgdialog.min.js"></script>
+<script type="text/javascript" src="${basePath}/static/lhgdialog/lhgdialog.min.js"></script>
+<script type="text/javascript" src="${basePath}/static/js/json3.js"></script>
+<script type="text/javascript" src="${basePath}/static/js/common.js"></script>
+</head>
+<body>
+<table cellSpacing="0" cellPadding="0" width="100%" border="0">
+  <tbody>
+    <tr>
+      <td width="10"><img src="${basePath}/static/images/new_001.jpg" border="0"></td>
+      <td class="topbackground"><img src="${basePath}/static/images/logo.gif"/></TD>
+      <td class="topbackground" align="right"> <a href="${basePath}/login/out" class="btnLoginout">安全退出</a></td>
+      <td width=10><img src="${basePath}/static/images/new_003.jpg"></td>
+    </tr>
+  </tbody>
+</table>
+<script type="text/javascript">
+function exit(){
+	if(confirm('确定退出系统吗？')){
+		window.top.location.href="../login.do?action=logout";
+	}
+}
+
+$(function(){
+	$(".btnClear").click(function(){
+		var str="压缩数据库一般在考试完成或访问缓慢时进行，\r\n因压缩数据库时会拒绝其它用户访问，\r\n请确保无其它用户使用该程序，确定压缩吗？";
+	
+		if(confirm(str)){
+			var href=$(this).attr("href");
+			$.post(
+					href,
+					{},
+					function(data){
+						if(data.status){
+							jAlert(data.data,data.info);
+						}
+					},
+					"json");
+		}
+		return false;
+	});
+	
+	$(".btnLoginout").click(function(){
+		return confirm("确定退出系统吗？");
+	});
+});
+</script>
+</body>
+</html>

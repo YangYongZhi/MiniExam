@@ -1,0 +1,118 @@
+<#include "../common/header.html">
+<link href="${basePath}/static/treetable/stylesheets/jquery.treetable.css" rel="stylesheet" type="text/css" />
+<link href="${basePath}/static/treetable/stylesheets/mytreetable.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="${basePath}/static/js/json3.js"></script>
+<script type="text/javascript" src="${basePath}/static/treetable/javascripts/jquery.treetable.js"></script>
+<script type="text/javascript">
+
+$(function(){
+	var table=$("#arealist").treetable({
+	 expandable: true,
+		onNodeCollapse: function() {
+        var node = this;
+        table.treetable("unloadBranch", node);
+      },
+      onNodeExpand: function() {
+      	var node = this;
+	      	$.ajax({
+	      		"async":false,
+	      		"url":"${basePath}/contral/results/absent/query?parentid="+node.id+"&layoutid=${layoutid }",
+	      		"cache":true,
+	      		"success":function(data){
+	      			data = JSON.parse(data);
+	      			if(data.status){
+	      				var html="";
+	      				for(var i=0;i<data.data.length;i++){
+	      				
+	      					var url="";
+	      					//if(data.data[i].id==510100){
+	      					//	url="${basePath}/contral/results/absent/users?layoutid=${layoutid}&city="+data.data[i].id;
+	      					//}else{
+	      					//	url="${basePath}/contral/results/absent/users?layoutid=${layoutid}&city="+data.data[i].parentId+"&country="+data.data[i].id;
+	      					//}
+	      					if(data.data[i].parentId==510000){
+	      						url="${basePath}/contral/results/absent/users?layoutid=${layoutid}&city="+data.data[i].id;
+	      					}else{
+	      						url="${basePath}/contral/results/absent/users?layoutid=${layoutid}&city="+data.data[i].parentId+"&country="+data.data[i].id;
+	      					}
+	      					
+	      					var exportUrl="";
+	      					if(data.data[i].parentId==510000){
+	      						exportUrl="${basePath}/contral/results/absent/export?layoutid=${layoutid}&city="+data.data[i].id;
+	      					}else{
+	      						exportUrl="${basePath}/contral/results/absent/export?layoutid=${layoutid}&city="+data.data[i].parentId+"&country="+data.data[i].id;
+	      					}
+	      					
+	      					html+='<tr ';
+	      					html+='data-tt-id="'+data.data[i].id+'"';
+	      					html+='data-tt-parent-id="'+data.data[i].parentId+'"';
+	      					
+	      					if(data.data[i].hasChild){
+	      						html+='  data-tt-branch="true"';
+	      					}
+	      					
+	      					html+="><td>";
+	      					if(data.data[i].hasChild){
+	      						html+="<span class=\"folder\"><a href=\""+url+"\">"+data.data[i].name+"</a></span>";
+	      					}else{
+	      						//开始查询金融机构
+	      						html+="<span class=\"file\"><a href=\""+url+"\">"+data.data[i].name+"</a></span>";
+	      					}
+	      					html+="</td>";
+	      					html+="<td align=\"center\">"+data.data[i].count+"</td>";
+	      					
+	      					html+="<td align=\"center\"><a href=\""+url+"\">查看列表</a></td>";
+	      					
+	      					html+="<td align=\"center\"><a href=\""+exportUrl+"\">导出</a></td>";
+	      					
+	      					html+="</tr>"; 
+	      				}
+	      				
+	      				table.treetable("loadBranch", node, html);
+	      			}else{
+	      				//无效请求
+	      				jAlert(data.info);
+	      			}
+	      		}
+	      	});
+      	
+      }
+	});
+});
+
+</script>
+
+<div class="nav">当前位置：管理首页 &gt; 考试结果 &gt; 缺考统计</div>
+
+<div class="contral">
+		时间：
+		<select name="examtime" onchange="location.href='${basePath}/contral/results/absent?layoutid='+this.value;">
+			<option value="">全部</option>
+			<#list layouts as el>
+			<option value="${el.id }" <#if el.id == layoutid>selected="selected"</#if> >${el.start_time?number_to_datetime } ~ ${el.end_time?number_to_datetime}</option>
+			</#list>
+		</select>
+</div>
+
+<div class="tables table-list">
+		<table id="arealist" class="changeColor" width="100%" cellspacing="0" cellpadding="0" border="0">
+			<thead>
+				<tr>
+					<td align="center" align="center">地区</td>
+					<td width="10%" align="center">人数</td>
+		        	<td width="10%" align="center" colspan="2">操作</td>
+	            </tr>
+			</thead>
+			<tbody>
+				<tr data-tt-id="510000" data-tt-branch="true" data-tt-append="123">
+					<td ><span class="folder">四川省</span></td>
+					<td align="center">${count}</td>
+					<td align="center"><a href="${basePath}/contral/results/absent/users?layoutid=${layoutid}">查看列表</a></td>
+					<td align="center"><a href="${basePath}/contral/results/absent/export?layoutid=${layoutid}">导出</a></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+<#include "../common/footer.html">

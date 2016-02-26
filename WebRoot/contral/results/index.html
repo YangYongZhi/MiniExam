@@ -1,0 +1,69 @@
+<#include "../common/header.html">
+<#assign usertype="com.maiyoule.miniexam.ui.template.UserTypeNameTemplate"?new()>
+<#assign bankname="com.maiyoule.miniexam.ui.template.BankTemplate"?new()>
+<#assign userinfo="com.maiyoule.miniexam.ui.template.UserTemplate"?new()>
+<#assign papername="com.maiyoule.miniexam.ui.template.UserPaperTemplate"?new()>
+<#assign scorestatus="com.maiyoule.miniexam.ui.template.ScoreStatusTemplate"?new()>
+<div class="nav">当前位置：管理首页 &gt; 考试结果 &gt; 考试成绩</div>
+<div class="contral">
+	<form action="${basePath}/contral/results/score">
+		准考号：<input type="text" name="cardno" value="${cardno}"/> 
+		时间：
+		<select name="layoutid">
+			<option value="0">全部</option>
+			<#list layouts as layout>
+			<option value="${layout.id }" <#if layout.id==layoutid>selected="selected"</#if>>${layout.start_time?number_to_datetime} ~ ${layout.end_time?number_to_datetime}</option>
+			</#list>
+		</select>
+		<input type="submit" value="搜索" class="btn white"/>&nbsp;&nbsp;
+	</form>
+</div>
+<div class="tables table-list">
+	<table class="changeColor" width="100%" cellspacing="0" cellpadding="0" border="0">
+		<thead>
+			<tr class="header">
+				<td width="8%" align="center">姓名</td>
+				<td width="10%">准考号</td>
+				<td width="20%" align="center">所在金融机构</td>
+		        <td width="24%" align="center">试卷</td>
+		        <td width="12%" align="center">成绩</td>
+	        	<td width="8%" align="center">操作</td>
+            </tr>
+		</thead>
+		<tbody>
+		
+			<#if (lists.totalRow == 0)>
+				<tr>
+	       				<td colspan="7" align="center">目前没有考试用户</td>
+	       			</tr>
+	 	  	<#else>
+	 	  		<#list lists.list as ex>
+	 	  			<tr>
+	       					<td align="center">${userinfo(ex.cardno)}</td>
+	       					<td align="center">${ex.cardno}</td>
+	       					<td>${bankname(ex.bankno)}</td>
+	       					<td align="center">${papername(ex.utype)}</td>
+	       					<td align="center">
+	       						${scorestatus(ex.score,ex.utype)}</td>
+	       					</td>
+	       					<td align="center">
+	       						<a href="${basePath}/contral/results/score/edit?id=${ex.id}&history=${history!''}">修改成绩</a> <br/> <a href="${basePath}/contral/results/score/answer?id=${ex.id}&history=${history!''}">试卷作答</a>
+	       					</td>
+	       				</tr>
+				</#list>
+			</#if>
+	        </tbody>
+	        	
+	        <tfoot>
+	        	<tr>
+	        		<td colspan="9">
+	        			<div class="tab-page">
+	        				<#include "../common/pages.html">
+	        				<ul class="l"></ul>
+				        </div>
+	        		</td>
+	        	</tr>
+		    </tfoot>
+	    </table>
+</div>
+<#include "../common/footer.html">

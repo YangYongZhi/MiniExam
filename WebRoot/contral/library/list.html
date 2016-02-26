@@ -1,0 +1,73 @@
+﻿<#include "../common/header.html">
+  	<script>
+	$(function(){
+		$(".del_item").click(function(){
+			if(confirm("确定删除该题库？")){
+				var url=$(this).attr("href");
+				$.get(url,{},function(data){
+					if(data.status){
+						window.location.reload();
+					}else{
+						jAlert(data.data);
+					}
+				},"json");
+			}
+			return false;
+		});
+	});
+	</script>
+
+	<div class="nav">当前位置：管理首页 &gt; 题库管理 &gt; 题库</div>
+	<div class="contral">
+		<input type="button" class="btn blue" value="新增题库" onclick="location.href='${basePath}/contral/lib/add';"/>
+	</div>
+
+	<!--数据表格-->
+	<div class="tables table-list">
+		<table class="changeColor" cellspacing="0" cellpadding="0" border="0" width="100%">
+			<thead>
+				<tr>
+					<td>题库名称</td>
+			        <td align="center">单选数量</td>
+			        <td align="center">多选数量</td>
+			        <td align="center">判断数量</td>
+			        <td align="center">操作</td>
+	            </tr>
+			</thead>
+			<tbody>
+				<#if lists.totalRow &gt; 0>
+					<#list lists.list as r>
+						<tr>
+							<td>${r.name}</td>
+					        <td align="center">${r.single_count}</td>
+					        <td align="center">${r.muti_count}</td>
+					        <td align="center">${r.juge_count}</td>
+					        <td align="center">
+					        	<a href="${basePath}/contral/ques?libraryId=${r.id}">试题管理</a> | 
+					        	<a href="${basePath}/contral/lib/update?id=${r.id}">编辑</a> | 
+					        	<a href="${basePath}/contral/lib/del?id=${r.id}" class="del_item">删除</a>
+					        </td>
+		           		</tr>
+		            </#list>
+				<#else>
+				<tr>
+				   	<td colspan="5" align="center">没有题库，<a href="${basePath}/contral/lib/add">新增一个</a></td>
+				</tr>
+				</#if>
+				
+				
+				<tr>
+					<td colspan="5" >
+						<div class="tab-page">
+						<#include "../common/pages.html">
+						</div>
+					</td>
+				</tr>
+				
+	        </tbody>
+	    </table>
+    </div>
+    <!-- 数据表格end -->
+							
+ 		
+<#include "../common/footer.html">

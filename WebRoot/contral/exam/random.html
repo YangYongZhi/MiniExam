@@ -1,0 +1,334 @@
+<#include "../common/header.html">
+
+<link rel="stylesheet" href="${basePath}/static/zTree_v3/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<script type="text/javascript"	src="${basePath}/static/zTree_v3/js/jquery.ztree.all-3.5.min.js"></script>
+<link rel="stylesheet" href="${basePath}/static/vTip_v2/css/vtip.css" type="text/css" />
+<script type="text/javascript" src="${basePath}/static/vTip_v2/vtip.js"></script>
+
+<div class="nav">当前位置：管理首页 &gt; 考试管理 &gt; 生成考试人员 &gt; 随机生成</div>
+<div class="contral">
+	<input type="button" class="btn white" value="返回生成列表" onclick="history.back(-1);">
+</div>
+<table style="width:100%;" cellspacing="0" cellpadding="0"
+	align="center" border="0">
+	<tr>
+		<td width="20%">地区 [<a href="javascript:void(0);" id="areaSelectAll">全选</a>] [<a
+			href="javascript:void(0);" id="areaSelectCanel">取消勾选</a>]</td>
+		<td width="20%">类型</td>
+		<td width="32%">金融机构 	[<a href="javascript:void(0);" id="bankSelectAll">全选</a>] [<a
+			href="javascript:void(0);" id="bankSelectCanel">取消勾选</a>]</td>
+		<td width="28%"></td>
+	</tr>
+
+	<tr>
+		<td valign="top" align="left">
+			<div style="height:400px;width:100%;overflow:scroll">
+				<ul id="areatree" class="ztree">
+
+				</ul>
+			</div>
+		</td>
+		<td valign="top" align="left">
+			<div style="height:400px;overflow-y:scroll">
+				<ul class="ztree" style="line-height:25px;">
+					<#list orgtypes as orgt>
+					<li>
+						<label>
+							<input type="checkbox" value="${orgt.no }" name="orgtype" onclick="onorgtype()" />${orgt.name }
+						</label>
+					</li>
+					</#list>
+				</ul>
+			</div>
+
+		</td>
+		<td valign="top" align="left">
+			<div style="height:400px;width:98%;;overflow:scroll">
+				<ul class="ztree" id="banktree">
+					
+				</ul>
+			</div>
+			
+		</td>
+		<td valign="top" align="left">
+			<fieldset>
+				<legend>抽取总数比例</legend>
+				<div class="tips">
+				比例：<input type="text" size="3" maxlength="3" name="userscale" value="100" class="vtip" title="从选中的人员中抽取比例"/>%
+			  </div>
+			</fieldset>
+			<br/>
+			<fieldset>
+				<legend>人员类型所占比例</legend>
+				<table>
+				<tr>
+					<td>名称</td>
+					<td>比例(%)</td>
+				</tr>
+				<#list utypes as ut>
+				<tr>
+					<td>
+						<label>
+							<input type="checkbox"	class="usertypecheckbox" name="utype" value="${ut.id}"
+							onchange="scalechange(this,'${ut_index }')" data-index="${ut_index }"> ${ut.name}</label>
+					</td>
+					<td>
+						<input type="text" class="usertypeinput" name="scale"
+						id="scale_${ut_index}" size="3" maxlength="3" value="100"
+						disabled="disabled" title="${ut.name}所占比例"/>%
+					</td>
+				</tr>
+				</#list>
+			
+			</table>
+			</fieldset>
+
+
+		</td>
+	</tr>
+	<tr>
+		<td colspan="4">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="4" align="center">
+			<input type="button" value="随机生成" class="btn orange btnGenRandom" onclick="genRandom()"/>
+		</td>
+	</tr>
+</table>
+
+
+
+
+<script type="text/javascript">
+
+var areanodes=${areasjson };
+//地区设置
+var ztreeAreaSetting={
+	"check":{
+		enable:true
+	},
+	data: {
+		simpleData: {
+			enable: true,
+			"pIdKey":"parent"
+		}
+	},
+	callback: {
+		onCheck: function(event, treeId, treeNode){
+			
+		}
+	},view: {
+		selectedMulti: false
+	}
+};
+
+
+$(function(){
+	$.fn.zTree.init($("#areatree"),ztreeAreaSetting,areanodes);
+	
+	//地区选择按钮
+	$("#areaSelectAll").click(function(){
+			var zTree = $.fn.zTree.getZTreeObj("areatree");
+			zTree.checkAllNodes(true);
+	});
+	$("#areaSelectCanel").click(function(){
+		var zTree = $.fn.zTree.getZTreeObj("areatree");
+		zTree.checkAllNodes(false);
+	});
+	
+	
+	//金融机构选择按钮
+	$("#bankSelectAll").click(function(){
+		
+		var zTree = $.fn.zTree.getZTreeObj("banktree");
+		zTree.checkAllNodes(true);
+	});
+	$("#bankSelectCanel").click(function(){
+		
+		var zTree = $.fn.zTree.getZTreeObj("banktree");
+		zTree.checkAllNodes(false);
+	});
+	
+	
+});
+
+
+function scalechange(o,i){
+	$("#scale_"+i).attr("disabled",!o.checked);
+}
+
+
+function onorgtype(){
+	var zTree = $.fn.zTree.getZTreeObj("areatree");
+	var nodes = zTree.getCheckedNodes(true);
+	
+	//获取叶子节点信息
+	
+	var selectnode=[];
+	
+	for(var i=0;i<nodes.length;i++){
+		if(!nodes[i].isParent){
+			selectnode.push(nodes[i].id);
+		}
+	}
+	
+	var selectorgtype=[];
+	//获取
+	var orgtypes=$("input[name=orgtype]");
+	
+	for(var i=0;i<orgtypes.length;i++){
+		if(orgtypes[i].checked){
+			selectorgtype.push(orgtypes[i].value);
+		}	
+	}
+
+	if(selectorgtype.length<1){
+		$.fn.zTree.destroy("banktree");
+		return;
+	}
+
+	$.ajax({
+		"url":"${basePath}/contral/exam/querybank",
+		"data":{
+			"areas":selectnode,
+			"orgtype":selectorgtype
+		},
+		"dataType":"json",
+		"traditional":true,
+		"success":function(data){
+			if(data.status){
+				//生成树形结构
+				var setting={
+					"data":{
+						"simpleData":{
+							"enable":true
+						}
+					},
+					"check":{
+						"enable":true
+					}
+				};
+				$("#banktree").empty();
+				
+				$.fn.zTree.init($("#banktree"),setting,data.data);
+				
+			}
+		},
+		"beforeSend":function(){
+			
+				$.fn.zTree.destroy("banktree");
+				
+				
+				$("#banktree").html('<li>正在加载...</li>');
+		},
+		"error":function(){
+			
+				$("#banktree").html('<li>网络错误或超时，加载失败...</li><li>因IE浏览器的问题，请不要勾选整个四川省...</li>');
+		}
+	});
+	
+
+}
+
+
+
+function genRandom(){
+	//获取选择的地区
+	var zTree = $.fn.zTree.getZTreeObj("areatree");
+	var nodes = zTree.getCheckedNodes(true);
+	
+	//获取叶子节点信息
+	
+	var selectarr=[];
+	
+	for(var i=0;i<nodes.length;i++){
+		if(!nodes[i].isParent){
+			selectarr.push(nodes[i].id);
+		}
+	}
+	
+	
+	//获取选择的银行
+	var banktree=$.fn.zTree.getZTreeObj("banktree");
+	var bnodes=[];
+	if(banktree != null) {
+		bnodes=banktree.getCheckedNodes(true);
+	}
+	
+	//选择的银行
+	var selectbankarr=[];
+	for(var i=0;i<bnodes.length;i++){
+		if(!bnodes[i].isParent){
+			selectbankarr.push(bnodes[i].id);
+		}
+	}
+	
+	//获取选择用户类型
+	//var selectusertype=$("input[name=utype][checked=true]");
+	
+	//获取选择比例值
+	var usertypes=[];
+	var usertypesacle=[];
+	
+	$("input[name=utype]:checked").each(function(){
+		var index=$(this).attr("data-index");
+		usertypes.push($(this).val());
+		usertypesacle.push($("#scale_"+index).val());
+	});
+	var usersacle=$("input[name=userscale]").val();
+	
+	if(selectbankarr.length ==0) {
+		jConfirm("未选择金融机构，将在全省所有机构用户中抽取考试人员，确定继续吗？","提示",function(){
+			$.ajax({
+				"url":"${basePath}/contral/exam/genRandom",
+				"type":"POST",
+				"dataType":"json",
+				"traditional":true,
+				"data":{"area":selectarr,"bank":selectbankarr,"utype":usertypes,"usertypesacle":usertypesacle,"usersacle":usersacle},
+				"success":function(data){
+					$(".btnGenRandom").val("随机生成");
+					if(data.status){
+						window.location.href=data.data;
+					}else{
+						jAlert(data.data,data.info);
+					}
+				},
+				"error":function(){
+					$(".btnGenRandom").val("随机生成");
+					jAlert("生成失败，请检查网络连接");
+				},
+				"beforeSend":function(){
+					$(".btnGenRandom").val("正在生成...");
+				}
+			});
+		});
+	} else {
+		$.ajax({
+			"url":"${basePath}/contral/exam/genRandom",
+			"type":"POST",
+			"dataType":"json",
+			"traditional":true,
+			"data":{"area":selectarr,"bank":selectbankarr,"utype":usertypes,"usertypesacle":usertypesacle,"usersacle":usersacle},
+			"success":function(data){
+				$(".btnGenRandom").val("随机生成");
+				if(data.status){
+					window.location.href=data.data;
+				}else{
+					jAlert(data.data,data.info);
+				}
+			},
+			"error":function(){
+				$(".btnGenRandom").val("随机生成");
+				jAlert("生成失败，请检查网络连接");
+			},
+			"beforeSend":function(){
+				$(".btnGenRandom").val("正在生成...");
+			}
+		});
+	}
+	
+	
+}
+
+</script>
+<#include "../common/footer.html">

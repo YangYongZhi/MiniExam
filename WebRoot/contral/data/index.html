@@ -1,0 +1,83 @@
+<#include "../common/header.html">
+<div class="nav">当前位置：管理首页 &gt; 系统功能 &gt; 导入/导出数据</div>
+
+<table style="width:100%;" cellspacing="0" cellpadding="0" align="center" border="0">
+	<tbody>
+		<tr>
+			<td>
+				<#if APP_MODEL==0>
+				<fieldset>
+					<legend>异地部署安装程序及数据</legend>
+					<table style="width:50%;">
+						<tr>
+							<td width="20%" align="right">安装程序：</td>
+							<td width="30%">
+								<a href="${basePath}/installpackage/Exam.zip">下载</a>
+							</td>
+							<td width="20%" align="right">安装数据：</td>
+							<td width="30%">
+								<a href="${basePath}/contral/data/exportinstall">选择导出</a>
+							</td>
+						</tr>
+					</table>
+				</fieldset>
+				
+				<br/>
+				
+				<fieldset>
+					<legend>异地考试数据导入</legend>
+					<table style="width:50%;">
+						<tr>
+							<td width="20%" align="right">考试数据：</td>
+							<td>
+								<a href="${basePath}/contral/data/dataToLocal">导入</a>
+							</td>
+						
+						</tr>
+					</table>
+				</fieldset> 
+				
+				<br/>
+				
+				<fieldset>
+					<legend>征信系统数分析数据导出</legend>
+					<table style="width:50%;">
+						<tr>
+							<td width="20%" align="right">考试数据：</td>
+							<td>
+								<a href="${basePath}/contral/data/exportzhenxin">导出</a>
+							</td>
+						
+						</tr>
+					</table>
+				</fieldset> 
+				
+				<br/>
+				
+			</#if>
+			
+			
+				<#if APP_MODEL==1>
+				<fieldset>
+					<legend>考试结果导出</legend>
+					<table style="width:50%;">
+						<tr>
+							<td width="20%" align="right">考试结果：</td>
+							<td>
+								<a href="${basePath}/contral/data/exportresult">导出</a>
+							</td>
+						</tr>
+					</table>
+				</fieldset>
+			
+				</#if>
+			</td>
+		</tr>
+		<tr>
+			<td height="25"></td>
+		</tr>
+
+	</tbody>
+</table>
+
+<#include "../common/footer.html">

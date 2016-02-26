@@ -1,0 +1,81 @@
+<#include "../common/header.html">
+
+<link rel="stylesheet" href="${basePath}/static/kindeditor/themes/default/default.css" />
+<script charset="utf-8" src="${basePath}/static/kindeditor/kindeditor-min.js"></script>
+<script charset="utf-8" src="${basePath}/static/kindeditor/lang/zh_CN.js"></script>
+<!-- <script type="text/javascript">
+var editor;
+			KindEditor.ready(function(K) {
+				editor = K.create('textarea[name="examNotice"]', {
+					resizeType : 1,
+					allowPreviewEmoticons : false,
+					allowImageUpload : false,
+					items : [
+						'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
+						'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist',
+						'insertunorderedlist']
+				});
+			});
+</script> -->
+
+<div class="nav">当前位置：管理首页 &gt; 系统功能 &gt; 考试设置</div>
+
+<form action="${basePath}/contral/config/update" method="post">
+	<div class="tables table-reg">
+		<table class="changeColor" cellspacing="0" cellpadding="0" border="0" width="100%">
+			<tbody>
+				
+	          <tr>
+				<td width="100" align="right">考试时长：</td>
+				<td>
+					<input type="text" name="examTime" size="4" maxlength="4" value="${examTime!'30'}"/> 分钟
+				</td>
+			</tr>
+			<tr>
+				<td align="right">强制设置：</td>
+				<td>
+					阅读考前注意事项<input type="text" name="examReadNotice" value="${examReadNotice!'10'}" size="4" maxlength="4"/>秒后才可进入考试<br/>
+					考试前<input type="text" name="examSubmitTime" size="4" maxlength="4" value="${examSubmitTime!'5'}"/>分钟内不允许提交试卷<br/>
+					考试 <input disabled="disabled" type="text" name="examAutoEndSubmitTime" size="4" maxlength="4" value="${examAutoEndSubmitTime!'5'}"/>分钟内未作答则自动提交试卷<br/>
+					考试结束前<input type="text" name="examEndTipsTime" size="4" maxlength="4" value="${examEndTipsTime!'5'}"/>分钟提示结束时间
+				</td>
+			</tr>
+			<tr>
+				<td align="right">考前注意事项：</td>
+				<td>
+					<textarea name="examNotice" style="width:99%;height:300px;">${examNotice!''}</textarea>
+				</td>
+			</tr>
+			
+			
+			<tr>
+				<td>&nbsp;</td>
+				<td><input type="button" id="submitbtn" class="btn orange" value="提交"/></td>
+			</tr>
+	            
+	        </tbody>
+	    </table>
+	    <!-- 数据表格end -->
+	</div>
+</form>
+<script>
+$(function(){
+	$("#submitbtn").click(function(){
+		
+		//editor.sync('textarea[name="examNotice"]');
+		$("form").ajaxSubmit({
+			"beforeSubmit":function(){
+			},
+		"dataType":"json","success":function(data){
+			if(data.status){
+			}
+			jAlert(data.data,data.info);
+		},"error":function(){
+			jAlert('保存失败');
+		}});
+	});
+
+	
+});
+</script>
+<#include "../common/footer.html">

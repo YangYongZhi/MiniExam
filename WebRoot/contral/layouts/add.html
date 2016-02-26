@@ -1,0 +1,75 @@
+<#include "../common/header.html">
+
+<link rel="stylesheet" href="${basePath}/static/jscal/jscal2.css" media="all" />
+<script src="${basePath}/static/jscal/jscal2.js"></script>
+
+<script type="text/javascript">
+	$(function() {
+		 Calendar.setup({
+	        trigger    : "start",
+	        inputField : "start",
+	        showTime :true,
+	        minuteStep :1,
+	        "dateFormat":"%Y-%m-%d %H:%M:%S",
+	       	 onSelect   : function() { this.hide();
+	         }
+	    });
+	     Calendar.setup({
+	        trigger    : "end",
+	        inputField : "end",
+	        showTime :true,
+	        minuteStep :1,
+	        "dateFormat":"%Y-%m-%d %H:%M:%S",
+	       	 onSelect   : function() { this.hide();
+	         }
+	    });
+	});
+
+</script>
+<div class="nav">当前位置：管理首页 &gt; 考试管理 &gt; 设置考试时间 &gt; 新增</div>
+<div class="contral">
+	<input type="button" class="btn white" value="返回到列表" onclick="location.href='${basePath}/contral/layouts';" />
+</div>
+
+<form action="${basePath}/contral/layouts/insert" method="post">
+	<div class="tables table-reg">
+		<table class="changeColor" cellspacing="0" cellpadding="0" border="0" width="100%">
+			<tbody>
+
+				<tr>
+					<td width="100">开始时间：</td>
+					<td><input type="text" id="start" name="start"	value="" size="18" maxlength="30"
+						/>
+					</td>
+				</tr>
+				<tr>
+					<td>结束时间：</td>
+					<td><input type="text" id="end" name="end"	value="" size="18" maxlength="20"
+						 />
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2"><input type="submit" class="btn orange"	value="保存" /></td>
+				</tr>
+			</tbody>
+		</table> <!-- 数据表格end -->
+	<div>
+</form>
+<script>
+$(function(){
+	$("form").ajaxForm({
+		"dataType":"json",
+		"success":function(data){
+			if(data.status){
+				window.location.href=data.data;
+			}else{
+				jAlert(data.data,data.info);
+			}
+		},
+		"error":function(){
+			jAlert('保存失败，请稍后再试');
+		}
+	});
+});
+</script>
+<#include "../common/footer.html">

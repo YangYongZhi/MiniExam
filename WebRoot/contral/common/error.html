@@ -1,0 +1,74 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3c.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>-</title>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+<link type="text/css" href="${basePath}/static/css/common.css" rel="stylesheet" />
+</head>
+
+<body>
+
+		<table cellspacing="0" cellpadding="0" width="99%" border="0">
+			<tbody>
+				<tr>
+					<td width="15"><img src="${basePath}/static/images/new_019.jpg"></td>
+					<td class="list_bg_top"></td>
+					<td width="15"><img src="${basePath}/static/images/new_021.jpg"></td>
+				</tr>
+			</tbody>
+		</table>
+		<table cellspacing="0" cellpadding="0" width="99%" border="0">
+			<tbody>
+				<tr>
+					<td class="list_bg_nav_top"><img
+						src="${basePath}/static/images/new_022.jpg"></td>
+					<td valign="center" align="center" width="100%"
+						style="background-color:#ffffff;">
+						<table width="400px">
+
+							<tr>
+								<td
+									rowspan="<#if message??>3<#else>2</#if>"><img
+									src="${basePath}/static/images/warn.png" /></td>
+								<td>操作失败</td>
+
+							</tr>
+							<#if message??>
+								<tr>
+									<td style="color:red;font-size:14px;">${message }</td>
+								</tr>
+							</#if>
+							
+							<tr>
+								<td>三秒后自动返回，无响应请点 <a href="javascript:backhistory();">这里</a></td>
+							</tr>
+						</table>
+
+					</td>
+					<td class="list_bg_box_right"><img
+						src="${basePath}/static/images/new_023.jpg" /></td>
+				</tr>
+			</tbody>
+		</table>
+
+
+
+	<script type="text/javascript">
+		function backhistory() {
+			history.back(-1);
+		}
+		setTimeout(backhistory, 3000);
+	</script>
+
+	<table cellspacing="0" cellpadding="0" width="99%" border="0">
+		<tbody>
+			<tr>
+				<td width="15"><img src="${basePath}/static/images/new_024.jpg"></td>
+				<td class="list_bg_box_bottom"></td>
+				<td width="15"><img src="${basePath}/static/images/new_026.jpg"></td>
+			</tr>
+		</tbody>
+	</table>
+	
+</body>
+</html>

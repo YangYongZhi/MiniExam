@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3c.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
+		<title>-</title>
+		<meta http-equiv="Pragma" content="no-cache"/>
+		<meta http-equiv="Cache-Control" content="no-cache"/>
+		<link type="text/css" href="${basePath}/static/css/common.css" rel="stylesheet"/>
+		<script src="${basePath}/static/js/jquery-1.9.1.js"></script>
+		<script type="text/javascript" src="${basePath}/static/js/jquery.form.js"></script>
+		<script type="text/javascript" src="${basePath}/static/js/tableui.js"></script>
+		<script type="text/javascript" src="${basePath}/static/lhgdialog/lhgcore.lhgdialog.min.js"></script>
+		<script type="text/javascript" src="${basePath}/static/lhgdialog/lhgdialog.min.js"></script>
+		<script type="text/javascript" src="${basePath}/static/js/common.js"></script>
+		<style type="text/css">
+		#___panel{padding-right:5px;}
+		</style>
+		
+		<script type="text/javascript">
+
+		$(function(){
+			$(".changeColor").tableUi();
+			var ie=!-[1,];
+			if(ie){
+				var userAgent = navigator.userAgent;
+				var reIE = new RegExp("MSIE (\\d+\\.\\d+);");
+			   	reIE.test(userAgent);
+			   	var fIEVersion = parseFloat(RegExp["$1"]);
+			   	if(fIEVersion<8){
+		   			var w=$(window).width();
+		   			$("body").width((w-20)+"px");
+			   	}
+			}
+		});
+		(function(config){
+		    config['extendDrag'] = true; 
+		    config['lock'] = true;
+		    config['fixed'] = true;
+		    config['max']=false;
+		    config['min']=false;
+		    config['okVal'] = '确认';
+		    config['cancelVal'] = '取消';
+		    // [more..]
+		})($.dialog.setting);
+		
+		</script>
+	</head>
+	
+	<body>
+		<div id="___panel">
+			<table cellspacing="0" cellpadding="0" border="0">
+				<tbody>
+					<tr>
+						<td width="15"><img src="${basePath}/static/images/new_019.jpg"></td>
+						<td class="list_bg_top"></td>
+						<td width="15"><img src="${basePath}/static/images/new_021.jpg"></td>
+					</tr>
+				</tbody>
+			</table>
+
+<table cellspacing="0" cellpadding="0" width="100%" border="0">
+	<tbody>
+		<tr>
+			<td class="list_bg_nav_top"><img src="${basePath}/static/images/new_022.jpg"></td>
+			<td valign="top" width="100%" style="background-color:#ffffff;">
+			

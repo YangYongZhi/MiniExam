@@ -1,0 +1,270 @@
+﻿<#include "../common/header.html">
+<div class="nav">当前位置：管理首页 &gt; 题库管理 &gt; ${library.name} &gt; 试题管理 &gt; 编辑</div>
+
+
+<div class="contral">
+	<input type="button" class="btn white" value="返回到列表" onclick="location.href='${basePath}/contral/ques?libraryId=${library.id}';"/>
+</div>
+
+<form action="${basePath}/contral/ques/doupdate" method="post">
+	<input name="id" value="${question.id }" type="hidden"/>
+	<div class="tables table-reg">
+		<table class="changeColor" cellspacing="0" cellpadding="0" width="100%" border="0">
+			<tbody>
+				<tr>
+					<td width="60">题库</td>
+					<td>
+						${library.name}
+					</td>
+					<td width="60">类型</td>
+					<td>
+						<select name="questionType">
+							<option value="single" <#if question.type == 'single'>selected="selected"</#if>>单选</option>
+							<option value="muti"
+							 <#if question.type == 'muti'>selected="selected"</#if>
+							>多选</option>
+							<option value="judge"
+							 <#if question.type == 'judge'>selected="selected"</#if>
+							>判断</option>
+						</select>
+					</td>
+					<td width="60">选项数目</td>
+					<td>
+						<select class="answeritem" id="answeritems" name="answeritemcount">
+							<#list itemsize as item>
+							<option value="${item}">${item}</option>
+							</#list>
+						</select>
+					</td>
+					<td width="60">状态</td>
+					<td>
+						<select name="questionStatus">
+							<option value="1" <#if (question.status == 1)>selected="selected"</#if>>正常</option>
+							<option value="0" <#if (question.status == 0)>selected="selected"</#if>>停用</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>试题描述</td>
+					<td colspan="7">
+						<textarea style="width:500px;height:120px;"	name="questionTitle">${question.title }</textarea>
+					</td>
+				</tr>
+				<tr>
+					<td>答案选项</td>
+					<td colspan="7">
+						<div style="line-height:30px;">通过点选编号可以设置正确答案</div>
+						<div  id="answerbox">
+							
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td colspan="7"><input type="submit" class="btn orange" value="提交"/></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</form>
+
+
+
+<script type="text/javascript">
+
+	var items = new Array();
+	var spliter="${STRING_SPLITER }";
+
+	$(function() {
+
+		$(".answeritem").change(function() {
+			var num = $(this).val();
+			var type=$("select[name=questionType]").val();
+			for(var i=0; i<num; i++) {
+				var name = "answerlabel" + i;
+				if($("textarea[name="+name+"]").val() != undefined) {
+					items[i] = $("textarea[name="+name+"]").val();
+				}
+			}
+			genAnswerItem(num,type);
+		});
+
+		$("select[name=questionType]").change(function() {
+			var type=$(this).val();
+			var num=$(".answeritem").val();
+			for(var i=0; i<num; i++) {
+				var name = "answerlabel" + i;
+				if($("textarea[name="+name+"]").val() != undefined) {
+					items[i] = $("textarea[name="+name+"]").val();
+				}
+			}
+			genAnswerItem(num,type);
+		});
+		
+		addAnswerItem('${question.answer_list!''}','${question.answer}','${question.type }');
+		
+		
+		$("form").ajaxForm({
+			"dataType":"json",
+			"success":function(data){
+				if(data.status){
+					window.location.href=data.data;
+				}else{
+					jAlert(data.data,data.info);
+				}
+			},
+			"error":function(){
+			}
+		});
+	});
+
+	
+	function genAnswerItem(num, type) {
+		var html = "";
+		var len = items.length;
+		if (type == "single") {
+			//单选
+			html += '<table>';
+			for ( var i = 0; i < num; i++) {
+				if(i%2==0){
+					html+="<tr>";
+				}
+				
+				var name = "answerlabel" + i;
+				html+='<td align="center" style="background-color:#64b4ff;"><input type="radio" name="trueanswer" value="'+i+'"/><br/>'+numConvert(i)+'</td>';
+				if(i<len) {
+					html+='<td><textarea name='+name+' style="width:240px;height:80px;">'+items[i]+'</textarea></td>';	
+				} else {
+					html+='<td><textarea name='+name+' style="width:240px;height:80px;"></textarea></td>';				
+				}
+				if(i%2==1){
+					html+="</tr>";
+				}
+			}
+			if(num%2==1){
+				html+="<td></td><td></td></tr>";
+			}
+			
+			html += "</table>";
+
+		}else if(type=="muti"){
+			//多选
+				html += '<table>';
+			for ( var i = 0; i < num; i++) {
+				if(i%2==0){
+					html+="<tr>";
+				}
+				
+				var name = "answerlabel" + i;
+				html+='<td align="center" style="background-color:#64b4ff;"><input type="checkbox" name="trueanswer" value="'+i+'"/><br/>'+numConvert(i)+'</td>';
+				if(i<len) {
+					html+='<td><textarea name='+name+' style="width:240px;height:80px;">'+items[i]+'</textarea></td>';	
+				} else {
+					html+='<td><textarea name='+name+' style="width:240px;height:80px;"></textarea></td>';				
+				}
+				if(i%2==1){
+					html+="</tr>";
+				}
+			}
+			
+			if(num%2==1){
+				html+="<td></td><td></td></tr>";
+			}
+			html += "</table>";
+		}else if(type=="judge"){
+			html+='<table><tr><td><label><input type="radio" name="trueanswer" value="1">正确</label></td><td><label><input type="radio" name="trueanswer" value="0">错误</label></td></tr></table>';
+		}
+		$("#answerbox").html(html);
+
+	}
+	
+	
+	function addAnswerItem(answerlist,trueanswer,type){
+		var html='';
+		if(type=='single'){
+			//单选
+			html+='<table>';
+			var answers=answerlist.split(spliter);
+			$("#answeritems").val(answers.length);
+			for(var i=0;i<answers.length;i++){
+				if(i%2==0){
+					html+='<tr>';
+				}
+				var answerlabel=numConvert(i);
+				
+				html+='<td  style="background-color:#64b4ff;" align="center"><input type="radio" name="trueanswer" value="'+answerlabel+'" ';
+				if(answerlabel==trueanswer){
+					html+='checked="checked"';
+				}
+				html+='/><br/>'+answerlabel+'</td>';
+				var name = "answerlabel" + i;
+				html+='<td><textarea name='+name+' style="width:240px;height:80px;">'+answers[i]+'</textarea></td>';
+				if(i%2==1){
+					html+='</tr>';
+				}
+			}
+			if(answers.length%2==1){
+				html+='<td></td><td></td></tr>';
+			}
+			html+='</table>';
+			
+			
+			
+		}else if(type=='muti'){
+			//多选
+			html+='<table>';
+			var answers=answerlist.split(spliter);
+			var trueanswers=trueanswer.split(spliter);
+			
+			$("#answeritems").val(answers.length);
+			for(var i=0;i<answers.length;i++){
+				if(i%2==0){
+					html+='<tr>';
+				}
+				var answerlabel=numConvert(i);
+				
+				html+='<td style="background-color:#64b4ff;" align="center"><input type="checkbox" name="trueanswer" value="'+answerlabel+'" ';
+				
+				for(var j=0;j<trueanswers.length;j++){
+					if(answerlabel==trueanswers[j]){
+						html+='checked="checked"';
+						break;
+					}
+				}
+				html+='/><br/>'+answerlabel+'</td>';
+				var name = "answerlabel" + i;
+				html+='<td><textarea name='+name+' style="width:240px;height:80px;">'+answers[i]+'</textarea></td>';
+				if(i%2==1){
+					html+='</tr>';
+				}
+			}
+			if(answers.length%2==1){
+				html+='<td></td><td></td></tr>';
+			}
+			
+			html+='</table>';
+		}else if(type=='judge'){
+			$("#answeritems").val(2);
+			//判断
+			html+='<table><tr><td><label><input type="radio" name="trueanswer"  value="1"';
+			if(trueanswer=='1'){
+				html+=' checked="checked" ';
+			}
+			html+='>正确<label></td><td><label><input type="radio" name="trueanswer" value="0" ';
+			if(trueanswer=='0'){
+				html+=' checked="checked" ';
+			}
+			html+='>错误</label></td></tr></table>';
+		
+		}
+		
+		$("#answerbox").html(html);
+		
+	}
+	
+	function numConvert(i){
+		return String.fromCharCode(i+65);
+	}
+
+</script>
+<#include "../common/footer.html">

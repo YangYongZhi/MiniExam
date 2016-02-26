@@ -1,0 +1,194 @@
+﻿<#include "../common/header.html">
+<div class="nav">当前位置：管理首页 &gt; 题库管理 &gt; ${library.name} &gt; 试题管理 &gt; 新增试题</div>
+	<div class="contral"><input type="button" class="btn white" value="返回到列表" onclick="location.href='${basePath}/contral/ques?libraryId=${library.id}';"/></div>
+		<form action="${basePath}/contral/ques/insert" method="post">
+			<input type="hidden" name="libraryId" value="${library.id}"/>
+			<div class="tables table-reg">
+				<table class="changeColor" width="100%" cellspacing="0" cellpadding="0" border="0">
+					<tbody>
+						<tr>
+							<td width="60" align="right">题库：</td>
+								<td>
+									${library.name}
+								</td>
+								<td width="60" align="right">类型：</td>
+								<td>
+									<select name="questionType">
+										<option value="single">单选</option>
+										<option value="muti">多选</option>
+										<option value="judge">判断</option>
+									</select>
+								</td>
+								<td width="60" align="right">选项数目：</td>
+								<td>
+									<select class="answeritem" name="answeritemcount">
+										<option value="2">2</option>
+										<option value="3">3</option>
+										<option value="4" selected="selected">4</option>
+										<option value="5">5</option>
+										<option value="6">6</option>
+										<option value="7">7</option>
+										<option value="8">8</option>
+										<option value="9">9</option>
+										<option value="10">10</option>
+										<option value="11">11</option>
+										<option value="12">12</option>
+									</select>
+								</td>
+								<td width="60" align="right">状态：</td>
+								<td>
+									<select name="questionStatus">
+										<option value="1">正常</option>
+										<option value="0">禁用</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="right">试题题目：</td>
+								<td colspan="7">
+									<textarea name="questionTitle" style="width:500px;height:120px;"></textarea>
+								</td>
+							</tr>
+							<tr>
+								<td align="right">答案选项：</td>
+								<td colspan="7">
+									<div style="line-height:30px;">通过点选编号可以设置正确答案</div>
+									<div  id="answerbox">
+										
+									</div>
+								</td>
+							</tr>
+							
+							<tr>
+								<td>&nbsp;</td>
+								<td colspan="7"><input type="submit" class="btn orange" value="提交"/></td>
+							</tr>
+				        </tbody>
+				        
+				    </table>
+				</div>
+			</form>
+					
+     
+
+
+<script type="text/javascript">
+
+	var items = new Array();
+
+	$(function() {
+		$(".answeritem").change(function() {
+			var num = $(this).val();
+			var type=$("select[name=questionType]").val();
+			for(var i=0; i<num; i++) {
+				var name = "answerlabel" + i;
+				if($("textarea[name="+name+"]").val() != undefined) {
+					items[i] = $("textarea[name="+name+"]").val();
+				}
+			}
+			genAnswerItem(num,type);
+		});
+
+		$("select[name=questionType]").change(function() {
+			var type=$(this).val();
+			var num=$(".answeritem").val();
+			for(var i=0; i<num; i++) {
+				var name = "answerlabel" + i;
+				if($("textarea[name="+name+"]").val() != undefined) {
+					items[i] = $("textarea[name="+name+"]").val();
+				}
+			}
+			genAnswerItem(num,type);
+		});
+		
+		var type=$("select[name=questionType]").val();
+		var num=$(".answeritem").val();
+		genAnswerItem(num,type);
+		
+		$("form").ajaxForm({
+			"dataType":"json",
+			"success":function(data){
+				if(data.status){
+					window.location.href=data.data;
+				}else{
+					jAlert(data.data,data.info);
+				}
+			},
+			"error":function(){
+				jAlert('提交数据失败，请检查网络连接','错误');
+			}
+		});
+	});
+
+	function genAnswerItem(num, type) {
+		var html = "";
+		var len = items.length;
+		if (type == "single") {
+			//单选
+			html += '<table>';
+			for ( var i = 0; i < num; i++) {
+				if(i%2==0){
+					html+="<tr>";
+				}
+				
+				var name = "answerlabel" + i;
+				var answerlabel=numConvert(i);
+				html+='<td align="center" style="background-color:#64b4ff;"><input type="radio" name="trueanswer" value="'+answerlabel+'"/><br/>'+answerlabel+'</td>';
+				
+				if(i<len) {
+					html+='<td><textarea name='+name+' style="width:240px;height:80px;">'+items[i]+'</textarea></td>';	
+				} else {
+					html+='<td><textarea name='+name+' style="width:240px;height:80px;"></textarea></td>';				
+				}
+
+				if(i%2==1){
+					html+="</tr>";
+				}
+				
+			}
+			if(num%2==1){
+				//补足
+				html+="<td></td><td></td></tr>";
+			}
+			html += "</table>";
+
+		}else if(type=="muti"){
+			//多选
+			html += '<table>';
+			for ( var i = 0; i < num; i++) {
+				if(i%2==0){
+					html+="<tr>";
+				}
+				
+				var name = "answerlabel" + i;
+				var answerlabel=numConvert(i);
+				html+='<td align="center" style="background-color:#64b4ff;"><input type="checkbox" name="trueanswer" value="'+answerlabel+'"/><br/>'+answerlabel+'</td>';
+				if(i<len) {
+					html+='<td><textarea name='+name+' style="width:240px;height:80px;">'+items[i]+'</textarea></td>';	
+				} else {
+					html+='<td><textarea name='+name+' style="width:240px;height:80px;"></textarea></td>';				
+				}
+				
+				if(i%2==1){
+					html+="</tr>";
+				}
+			}
+			if(num%2==1){
+				html+="<td></td><td></td></tr>";
+			}
+			html += "</table>";
+		}else if(type=="judge"){
+			html+='<table><tr><td><label><input type="radio" name="trueanswer" value="1">正确</label></td><td><label><input type="radio" name="trueanswer" value="0">错误</label></td></tr></table>';
+		}
+		
+		
+		$("#answerbox").html(html);
+
+	}
+	
+		function numConvert(i){
+		return String.fromCharCode(i+65);
+	}
+
+</script>
+<#include "../common/footer.html">

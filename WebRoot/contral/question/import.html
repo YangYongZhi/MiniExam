@@ -1,0 +1,52 @@
+<#include "../common/header.html">
+<div class="nav">当前位置：管理首页 &gt; 题库管理 &gt; ${library.name} &gt; 试题管理 &gt; 导入</div>
+<div class="contral">
+	<input type="button" class="btn white" value="返回到列表" onclick="location.href='${basePath}/contral/ques?libraryId=${library.id}';"/>
+</div>
+<form action="${basePath}/contral/ques/fileimport" method="post" enctype="multipart/form-data">
+	<input type="hidden" name="libraryId" value="${library.id}" />
+	<div class="tables table-reg">
+		<table class="changeColor" cellspacing="0" cellpadding="0" width="100%" border="0">
+			<tbody>
+				<tr>
+					<td width="80" align="right">题库：</td>
+					<td>
+						${library.name}
+					</td>
+				</tr>
+				<tr id="fileuploadpanel">
+					<td align="right">试题文件：</td>
+					<td>
+						<input type="file" name="workfile"/>
+					</td>
+				</tr>
+
+				<tr>
+					<td>&nbsp;</td>
+					<td><input type="submit" class="btn orange btnsubmit" value="提交"/></td>
+				</tr>
+			</tbody>
+	    </table>
+	    <!-- 数据表格end -->
+	</div>
+								    		
+</form>
+<script type="text/javascript">
+	$(function(){
+		$("form").ajaxForm({
+			"dataType":"json",
+			"success":function(data){
+				if(data.status){
+					window.location.href=data.data;
+				}else{
+					jAlert(data.data,data.info);
+				}
+			},
+			"error":function(){
+				jAlert('导入失败，请检查网络连接');
+			}
+		});
+	});
+</script>
+
+<#include "../common/footer.html">

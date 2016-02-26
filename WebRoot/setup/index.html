@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta content="Content-Type:text/html;charset=UTF-8" />
+<title>网站数据安装</title>
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="cache-control" content="no-cache">
+<meta http-equiv="expires" content="0">
+<link type="text/css" href="../static/css/common.css" rel="stylesheet" />
+
+<script type="text/javascript" src="../static/js/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="../static/js/jquery.form.js"></script>
+<script type="text/javascript" src="../static/lhgdialog/lhgdialog.min.js"></script>
+<script type="text/javascript" src="../static/js/common.js"></script>
+
+</head>
+
+<body>
+	<div class="tables">
+		<form action="/setup/imports" method="post" enctype="multipart/form-data">
+			<fieldset>
+				<legend>上传数据安装包</legend>
+				<table class="changeColor" cellspacing="0" cellpadding="0" border="0">
+					<tr>
+						<td>数据包：</td>
+						<td><input type="file" name="datapackage" /></td>
+					</tr>
+					<tr>
+						<td>密码：</td>
+						<td><input type="password" name="password" value="" /></td>
+					</tr>
+					<tr>
+						<td colspan="2"><input type="submit" id="submitbtn" class="btn orange" value="开始导入" /></td>
+					</tr>
+
+					<tr>
+						<td colspan="2" id="curstatus"><span id="status"></span></td>
+					</tr>
+				</table>
+			</fieldset>
+		</form>
+	</div>
+	
+	<script type="text/javascript">
+			
+		$("form").ajaxForm({
+			"beforeSubmit" : function() {
+				$("#status").html("正在导入！请稍候。。。。。");
+				$("#submitbtn").val("正在导入");
+				$("#submitbtn").attr("disabled", true);
+			},
+			"dataType" : "json",
+			"success" : function(data) {
+				$("#status").html(data.data);
+				jAlert(data.data, data.info, function() {
+					if (data.status) {
+						location.href = "/";
+					} else {
+						window.location.reload();
+					}
+					$("#submitbtn").val("开始导入");
+					$("#submitbtn").attr("disabled", false);
+				});
+			},
+			"error" : function() {
+				$("#status").html("导入失败，请重新导入！");
+				$("#submitbtn").val("开始导入");
+				$("#submitbtn").attr("disabled", false);
+				jAlert("导入失败，请重新导入！");
+			}
+		});
+	</script>
+</body>
+</html>

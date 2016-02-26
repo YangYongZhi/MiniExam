@@ -1,0 +1,75 @@
+<#include "../common/header.html">
+
+<div class="nav">当前位置：管理首页 &gt; 考试管理 &gt; 设置考试时间</div>
+<div class="contral">
+	<input type="button" class="btn white" value="新增考试时间" onclick="location.href='${basePath}/contral/layouts/add';"/>
+</div>
+<div class="tables table-list">
+	<table class="changeColor" width="100%" cellspacing="0" cellpadding="0" border="0">
+		<thead>
+			<tr>
+		        <td width="20%" align="center">开始时间</td>
+		        <td width="20%" align="center">结束时间</td>
+		        <td width="20%" align="center">考试人数</td>
+	        	<td width="40%" align="center">操作</td>
+            </tr>
+		</thead>
+		<tbody>
+			
+			<#if (lists.totalRow == 0)>
+	   			<tr>
+	   				<td colspan="4" align="center">没有考试安排记录</td>
+	   			</tr>
+	 	  	<#else>
+	 	  		<#list lists.list as layout>
+	   			<tr>
+			        <td align="center">${layout.start_time?number_to_datetime}</td>
+			        <td align="center">${layout.end_time?number_to_datetime}</td>
+			        <td align="center">${layout.count }</td>
+		        	<td align="center"> <a href="${basePath}/contral/layouts/addusers?id=${layout.id}">加入考试人员</a> | <a href="${basePath}/contral/layouts/viewusers?id=${layout.id}">查看考试人员</a> | <a href="${basePath}/contral/layouts/edit?id=${layout.id}">编辑</a> | <a href="${basePath}/contral/layouts/del?id=${layout.id}" class="delitem">删除</a></td>
+		        </tr>
+				</#list>
+			</#if>
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="4">
+					<div class="tab-page">
+				        
+                       	<#include "../common/pages.html">
+				        <ul class="l">
+				        </ul>
+				     </div>
+				</td>
+			</tr>
+		</tfoot>
+	</table>
+</div>
+
+<script type="text/javascript">
+	$(function() {
+		$(".delitem").click(function() {
+			var url=$(this).attr('href');
+			jConfirm('删除考试安排将同时删除考试用户的相关信息，确定删除？','删除',function(){
+				$.ajax({
+				"url":url,
+				"type":"post",
+				"dataType":"json",
+				"success":function(data){
+					if(data.status){
+						window.location.reload();
+					}else{
+						jAlert(data.data,data.info);
+					}
+				},
+				"error":function(){
+				}
+			});
+			});
+			return false;
+		});
+	});
+</script>
+
+
+<#include "../common/footer.html">

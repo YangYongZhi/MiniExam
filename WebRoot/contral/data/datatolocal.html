@@ -1,0 +1,44 @@
+<#include "../common/header.html">
+<div class="nav">当前位置：管理首页 &gt; 系统功能 &gt; 导入与导出 &gt; 异地数据导入</div>
+
+
+<form action="${basePath}/contral/data/doimport2local" method="post" enctype="multipart/form-data">
+	<div class="tables table-reg">
+		<table class="changeColor" cellspacing="0" cellpadding="0" border="0" width="100%">
+			<tbody>
+				
+	          <tr>
+				<td width="100" align="right">选择数据包：</td>
+				<td>
+					<input type="file" name="datapackage" value="请选择"/>
+				</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td><input type="submit" class="btn orange" value="导入"/></td>
+			</tr>
+	            
+	        </tbody>
+	    </table>
+	    <!-- 数据表格end -->
+	</div>
+</form>
+<script type="text/javascript">
+$("form").ajaxForm({
+	"dataType" : "json",
+	"timeout" : 60000,
+	"error" : function() {
+		jAlert("导入失败，请重新导入！");
+	},
+	"success" : function(data) {
+		jAlert(data.data, data.info, function() {
+			if(data.status){
+				window.location.reload();
+			}
+		});
+	}
+
+});
+
+</script>
+<#include "../common/footer.html">

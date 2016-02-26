@@ -1,0 +1,19 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3c.org/TR/1999/REC-html401-19991224/frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>${APP_NAME}</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+<frameset frameSpacing="0" rows="80,*" frameBorder="0">
+	<frame name="top" src="${basePath}/contral/page?p=top" frameBorder="0" noResize
+		scrolling="no"></frame>
+	<frameset frameSpacing="0" frameBorder="0" cols="190,*">
+		<frame name="menu" src="${basePath}/contral/page?p=menu" frameBorder="0"
+			noResize></frame>
+		<frame name="dmMain" src="${basePath}/contral/page?p=welcome" frameBorder="0"></frame>
+	</frameset>
+	<noframes>
+		<p>本页面需要框架支持，您的浏览器不支持框架</p>
+	</noframes>
+</frameset>
+</html>

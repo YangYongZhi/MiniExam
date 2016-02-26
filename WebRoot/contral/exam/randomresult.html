@@ -1,0 +1,41 @@
+<#include "../common/header.html">
+
+<#assign usertype="com.maiyoule.miniexam.ui.template.UserTypeNameTemplate"?new()>
+<div class="nav">当前位置：管理首页 &gt; 考试管理 &gt; 生成考试人员 &gt; 随机生成 &gt; 生成报告</div>
+<div class="contral">
+	<input type="button" class="btn white" value="返回到列表" onclick="location.href='${basePath}/contral/exam/';">
+</div>
+<div class="tables table-reg">
+	<table class="changeColor" cellspacing="0" cellpadding="0" border="0" width="100%">
+		<tbody>
+			<tr>
+				<td width="20%">总人数：</td>
+				<td>${report.total}</td>
+			</tr>
+			<tr>
+				<td>比例：</td>
+				<td>${report.scale}%</td>
+			</tr>
+			<tr>
+				<td>实际抽取人数：</td>
+				<td>${report.finalcount}</td>
+			</tr>
+			
+			<#list report.list as ut>
+				<tr>
+					<td>${usertype(ut.typeId)!'-'}</td>
+					<td>${ut.count}(${ut.scale}%)</td>
+				</tr>
+			</#list>
+			<tr>
+				<td>
+					&nbsp;
+				</td>
+				<td>
+					<a href="${basePath}/contral/exam/resultuser?sign=${report.sign}">查询生成列表</a>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<#include "../common/footer.html">

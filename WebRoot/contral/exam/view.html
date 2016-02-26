@@ -1,0 +1,152 @@
+<#include "../common/header.html">
+<#assign usertype="com.maiyoule.miniexam.ui.template.UserTypeNameTemplate"?new()>
+<#assign bankname="com.maiyoule.miniexam.ui.template.BankTemplate"?new()>
+<#assign userinfo="com.maiyoule.miniexam.ui.template.UserTemplate"?new()>
+<#assign areas="com.maiyoule.miniexam.ui.template.AreaTemplate"?new()>
+<script type="text/javascript" src="${basePath}/static/cxSelect/js/jquery.cxselect.min.js"></script>
+
+<div class="nav">当前位置：管理首页 &gt; 考试管理 &gt; 生成考试人员 &gt; ${areas(city)!''} ${areas(country)!''}</div>
+<div class="contral">
+	<form action="${basePath}/contral/exam/views?${queryString!''}">
+	<span id="selectdom">
+		<#list fillbanks as bank>
+		<select class="bank_${bank_index}" name="ubankNo" data-value="${bank}" disabled="disabled"></select>
+		</#list>
+	</span>
+	<input type="submit" class="btn blue" value="筛选"/>
+	</form>
+</div>
+
+<!--数据表格-->
+<div class="tables table-list">
+	<form id="deleteCheckedForm" action="${basePath}/contral/exam/batchDelExamUser" method="post" onsubmit="return checksubmit();">
+		<table class="changeColor" width="100%" cellspacing="0" cellpadding="0" border="0">
+			<thead>
+				<tr>
+					<td width="3%" align="center"><input type="checkbox" id="selectall"/></td>
+					<td width="10%" align="center">姓名</td>
+					<td width="20%">准考号</td>
+					<td>所在金融机构</td>
+		        	<td width="8%" align="center">操作</td>
+	            </tr>
+			</thead>
+			<tbody>
+			
+				<#if (lists.totalRow == 0)>
+					<tr>
+	       				<td colspan="6" align="center">没有考试用户</td>
+	       			</tr>
+				<#else>
+					<#list lists.list as layout>
+						<tr>
+	       					<td align="center"><input type="checkbox" name="ids" value="${layout.id }" class="cbitems"/></td>
+	       					<td align="center">${userinfo(layout.cardno)}</td>
+	       					<td align="center">${layout.cardno}</td>
+	       					<td>${bankname(layout.bankno)}</td>
+	       					<td align="center">
+	       						<a href="${basePath}/contral/exam/delExamUser?id=${layout.id}" class="delitem">移除</a>
+	       					</td>
+	       				</tr>
+					</#list>
+			</#if>
+	        </tbody>
+	        
+	        <tfoot>
+	        	<tr>
+	        		<td colspan="6">
+	        			<div class="tab-page">
+                       		<#include "../common/pages.html">
+                         
+	        				<ul class="l">
+	        					<li><input id="btnSubmit" value="删除选中" class="btn white"/></li>
+                            </ul>
+                     </div>
+		        	</td>
+	        	</tr>
+	        </tfoot>
+	    </table>
+	 </form>
+</div>
+
+<!-- 数据表格end -->
+<script type="text/javascript">
+	$(function(){
+		$(".delitem").click(function(){
+		var url=$(this).attr("href");
+		jConfirm("移除时将同时删除该用户的考试相关数据，确定移除？","确定",function(){
+			$.ajax({
+				"url":url,
+				"dataType":"json",
+				"success":function(data){
+					if(data.status){
+						window.location.reload();
+					}else{
+						jAlert(data.data);
+					}
+				}
+			});
+		});
+		return false;
+		});
+		
+		$("#deleteCheckedForm").ajaxForm({
+			"dataType":"json",
+			"success":function(data){
+				if(data.status){
+					jAlert(data.data,data.info,function(){
+						window.location.reload();
+					});
+				}else{
+					jAlert(data.data,data.info);
+				}
+			},
+			"error":function(){
+				jAlert('移除失败，请稍后再试');
+			}
+		});
+		
+		$("#btnSubmit").click(function(){
+			jConfirm("确定移除选中的用户吗？","确定",function(){
+				$("#deleteCheckedForm").submit();
+			});
+			return false;
+		});
+		
+		
+		$("#selectall").change(function(){
+			$(".cbitems").prop("checked",this.checked);
+		});
+		$("#selectdom").cxSelect({
+			"selects":['bank_0','bank_1','bank_2','bank_3','bank_4','bank_5','bank_6','bank_7','bank_8','bank_9'],
+			"nodata":'none',
+			"firstValue":'',
+			"firstTitle":"全部",
+			"url":${treebox!'{}'}
+		});
+		//filter.init("btnfilter","exams.do?action=examusers");
+	});
+	
+	function checksubmit(){
+		var ischeck=false; 
+		$(".cbitems").each(function(){
+			if(this.checked){
+				ischeck=true;
+			}
+		});
+		if(!ischeck){
+			jAlert("请选择要删除的项");
+		}
+		return ischeck;
+	}
+	
+	function checkclear(){
+		if(!confirm("清空考试用户将彻底清空考试系统中考试用户的所有信息，确认清空吗？")){
+			return false;
+		}
+		
+		location.href='exams.do?action=clearall';
+	}
+</script>
+	
+	
+<#include "../common/footer.html">

@@ -1,0 +1,51 @@
+<#include "../common/header.html">
+<div class="nav">当前位置：管理首页 &gt; 系统功能 &gt; 导入与导出 &gt; 异地部署安装数据导出</div>
+
+<div class="tables table-list">
+<form action="${basePath}/contral/data/doexportinstall" method="post">
+<table style="width:100%;" cellspacing="0" cellpadding="0" align="center" border="0">
+	<tbody>
+		<tr>
+			<td width="20%">
+				选择要导出的考试安排：
+			</td>
+			<td>
+				<#list layouts as layout>
+					<label><input type="checkbox" name="ids" value="${layout.id}"/>${layout.start_time?number_to_datetime} ~ ${layout.end_time?number_to_datetime}</label> <br/>
+				</#list>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				安装密码：
+			</td>
+			<td>
+				<input type="password" name="zippassword"/>
+			</td>
+		</tr>
+		<tr>
+			<td>设置登录帐号：</td>
+			<td>
+				<input type="text" name="username"/>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>设置登录密码：</td>
+			<td>
+				<input type="password" name="userpassword"/>
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>
+				<input type="submit" class="btn blue" value="确定导出"/>
+			</td>
+		</tr>
+
+	</tbody>
+</table>
+</form>
+</div>
+
+<#include "../common/footer.html">

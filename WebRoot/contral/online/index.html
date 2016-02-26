@@ -1,0 +1,294 @@
+<#include "../common/header.html">
+<#assign usertype="com.maiyoule.miniexam.ui.template.UserTypeNameTemplate"?new()>
+<#assign bankname="com.maiyoule.miniexam.ui.template.BankTemplate"?new()>
+<#assign userinfo="com.maiyoule.miniexam.ui.template.UserTemplate"?new()>
+<#assign papername="com.maiyoule.miniexam.ui.template.UserPaperTemplate"?new()>
+<#assign examstatus="com.maiyoule.miniexam.ui.template.ExamStatusTemplate"?new()>
+
+<div class="nav">当前位置：管理首页 &gt; 考试管理 &gt; 考试状态</div>
+<div class="contral">
+	<table>
+		<tr>
+			<td>
+			<form action="${basePath}/contral/online">
+		状态：<select name="status">
+			<option value="-1" <#if (status==-1)>selected="selected"</#if>>全部</option>
+			<option value="2" <#if (status==2)>selected="selected"</#if>>异常</option>
+			<option value="1" <#if (status==1)>selected="selected"</#if>>已登录</option>
+			<option value="0" <#if (status==0)>selected="selected"</#if>>未登录</option>
+		</select>
+		考试状态：
+		<select name="layoutstatus">
+			<option value="-1">全部</option>
+			<option value="0"
+				<#if (layoutstatus==0)>selected="selected"</#if>
+			>未考试</option>
+			<option value="1"
+				<#if (layoutstatus==1)>selected="selected"</#if>
+			>正在考试</option>
+			<option value="2"
+				<#if (layoutstatus==2)>selected="selected"</#if>
+			>转移考试</option>
+			<option value="3"
+				<#if (layoutstatus==3)>selected="selected"</#if>
+			>关闭</option>
+			<option value="4"
+				<#if (layoutstatus==4)>selected="selected"</#if>
+			>完成</option>
+		</select>
+		准考号：
+		<input type="text" name="cardno"  value="${cardno!''}"/> 
+		时间：
+		<select name="examtime">
+			<option value="">全部</option>
+			<#list layouts as layout>
+			<option value="${layout.id }" <#if layout.id==layout_id>selected="selected"</#if> >${layout.start_time?number_to_datetime} ~ ${layout.end_time?number_to_datetime}</option>
+			</#list>
+		</select>
+		<input type="submit" value="筛选" class="btn white"/>
+		
+		
+	</form>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<input type="button" value="刷新列表" class="btn white" onclick="window.location.reload();"/>
+		<input type="button" value="关闭考试" class="btn white" onclick="location.href='${basePath}/contral/online/closeAll';"/>
+		<a href="${basePath}/contral/online">在线情况</a> 
+		<a href="${basePath}/contral/online/viewcount">人数统计</a>
+			</td>
+		</tr>
+	</table>
+	
+</div>
+<div class="tables table-list">
+	<table class="changeColor" width="100%" cellspacing="0" cellpadding="0" border="0">
+		<thead>
+			<tr>
+				<td width="8%" align="center">姓名</td>
+				<td width="10%" align="center">准考号</td>
+				<td width="20%" align="center">所在金融机构</td>
+		        <td width="24%" align="center">试卷</td>
+		        <td width="12%" align="center">状态</td>
+	        	<td width="8%" align="center">操作</td>
+            </tr>
+        </thead>
+		<tbody>
+		
+			<#if (lists.totalRow == 0)>
+				<tr>
+       				<td colspan="7" align="center">没有找到考试用户</td>
+       			</tr>
+	 	  	<#else>
+	 	  		<#list lists.list as ex>
+	 	  			<tr>
+       					<td align="center">${userinfo(ex.cardno)}<input type="hidden" value="${ex.id}" class="queryid"/></td>
+       					<td align="center">${ex.cardno}</td>
+       					<td>${bankname(ex.bankno)}</td>
+       					<td>${papername(ex.utype)!'-'}</td>
+       					<td align="center" id="itemstatus_${ex.id}">
+       					${examstatus(ex.user_status!0,ex.layouts_status!0)}
+       					</td>
+       					<td align="center" id="itemopeart_${ex.id}">
+       						
+       						<#switch ex.user_status>
+       							<#case 0>
+       								<#if ex.layouts_status!=3>
+       									<a href="${basePath}/contral/online/closeexam?id=${ex.id}" class="btnclose">关闭</a>
+       								</#if>
+       							<#break>
+       							
+       							<#case 1>
+       									<a href="${basePath}/contral/online/offline?id=${ex.id }" class="btnoffline">下线</a> |
+       								<a href="${basePath}/contral/online/move?id=${ex.id }" class="btnmove">转移考试</a>  |
+       								<a href="${basePath}/contral/online/closeexam?id=${ex.id }" class="btnclose">关闭</a>
+       						
+       							<#break>
+       							<#case 2>
+       									<a href="${basePath}/contral/online/move?id=${ex.id}" class="btnmove">转移考试</a> 
+       								|
+       								<a href="${basePath}/contral/online/closeexam?id=${ex.id}" class="btnclose">关闭</a>
+       					
+       							<#break>
+       							<#default>
+       							
+       						</#switch>
+       						&nbsp;
+       					</td>
+       				</tr>
+				</#list>
+			</#if>
+       	
+        </tbody>
+        
+        <tfoot>
+        	<tr>
+        		<td colspan="9">
+        			<div class="tab-page">
+		             	<#include "../common/pages.html">
+                        <ul class="l"></ul>
+                    </div>
+        		</td>
+        	</tr>
+        </tfoot>
+    </table>
+</div>
+
+<script type="text/javascript">
+
+	$(function(){
+		$(".btnclose").click(function(){
+			var url=$(this).attr("href");
+			__close(url);
+			return false;
+		});
+		
+		$(".btnoffline").click(function(){
+			var url=$(this).attr("href");
+			__offline(url);
+			return false;
+		});
+		
+		$(".btnmove").click(function(){
+			var url=$(this).attr("href");
+			__move(url);
+			return false;
+		});
+		
+		onlinestatusHandler=setInterval(queryonline,5000);//每10秒查询一次
+	});
+	
+	var onlinestatusHandler=null;
+	
+	function __close(url){
+		jConfirm('关闭用户考试后，此用户将无法进行考试，同时相关的数据也将无效，确认这样操作吗？','关闭提示',function(){
+		
+				$.ajax({
+					"url":url,
+					"dataType":"json",
+					"success":function(data){
+						if(data.status){
+							updateopeart(data.data.layoutstatus,data.data.userstatus,data.data.layoutid);
+						}
+					}
+				});
+		});
+	}
+	
+	function __move(url){
+		jConfirm('当前客户端出现异常时使用转移考试，转移考试可保留当前考试状态，确认转移操作吗？','转移提示',function(){
+			$.ajax({
+				"url":url,
+				"dataType":"json",
+				"cache":false,
+				"success":function(data){
+					if(data.status){
+						updateopeart(data.data.layoutstatus,data.data.userstatus,data.data.layoutid);
+					}
+				}
+			});
+		});
+	}
+	
+	function __offline(url){
+		jConfirm('确认执行下线操作吗？','下线提示',function(){
+			$.ajax({
+				"url":url,
+				"cache":false,
+				"success":function(data){
+					if(data.status){
+						updateopeart(data.data.layoutstatus,data.data.userstatus,data.data.layoutid);
+					}
+				},
+				"dataType":"json"
+			});
+		});
+	}
+	
+	function updateitemclick(o,type){
+		var url=$(o).attr('href');
+		if(type=='close'){
+			__close(url);
+		}else if(type=='offline'){
+			__offline(url);
+		}else if(type=='move'){
+			__move(url);
+		}
+		
+		return false;
+	}
+	
+	
+	function updateopeart(layoutstatus,userstatus,id){
+		var html='';
+		if(userstatus==0&&layoutstatus!=3){
+			html+='<a href="${basePath}/contral/online/closeexam?id='+id+'" class="btnclose" onclick="return updateitemclick(this,\'close\')">关闭</a>';
+		}else if(userstatus==1){
+			html+='<a href="${basePath}/contral/online/offline?id='+id+'" class="btnoffline" onclick="return updateitemclick(this,\'offline\')">下线</a> | <a href="${basePath}/contral/online/move&id='+id+'" class="btnmove" onclick="return updateitemclick(this,\'move\')">转移考试</a> | <a href="${basePath}/contral/online/closeexam?id='+id+'" class="btnclose" onclick="return updateitemclick(this,\'close\')">关闭</a>';
+		}else if(userstatus==2){
+			html+='<a href="${basePath}/contral/online/move?id='+id+'" class="btnmove" onclick="return updateitemclick(this,\'move\')">转移考试</a> | <a href="${basePath}/contral/online/closeexam?id='+id+'" class="btnclose" onclick="return updateitemclick(this,\'close\')">关闭</a>';
+		}
+		$("#itemopeart_"+id).html(html+"&nbsp;");
+		
+		var statuslabel="";
+		switch(userstatus){
+			case 0:
+				statuslabel+='<label class="gay">未在线</label>';
+				break;
+			case 1:
+				statuslabel+='<label class="green">在线</label>';
+				break;
+			case 2:
+				statuslabel+='<label class="red">异常</label>';
+				break;
+		}
+		switch(layoutstatus){
+			case 0:
+				statuslabel+='(<label class="gay">未考试</label>)';
+				break;
+			case 1:
+				statuslabel+='(<label class="green">正在考试</label>)';
+				break;
+			case 2:
+				statuslabel+='(<label class="yellow">转移考试</label>)';
+				break;
+			case 3:
+				statuslabel+='(<label class="red">关闭考试</label>)';
+				break;
+			case 4:
+				statuslabel+='(<label class="green">完成考试</label>)';
+				break;
+		}
+		
+			$("#itemstatus_"+id).html(statuslabel);
+		
+	}
+	
+	function queryonline(){
+		var ids=[];
+		$(".queryid").each(function(){
+			ids.push(this.value);
+		});
+		$.ajax({
+			"traditional":true,
+			"url":"${basePath}/contral/online/query",
+			"data":{"ids":ids},
+			"dataType":"json",
+			"cache":false,
+			"success":function(data){
+				if(data.status){
+					for(var i=0;i<data.data.length;i++){
+						updateopeart(data.data[i].layoutstatus,data.data[i].userstatus,data.data[i].id);
+					}
+				}
+			},
+			"timeout":150000
+		});
+		
+	}
+
+</script>
+	
+	
+<#include "../common/footer.html">

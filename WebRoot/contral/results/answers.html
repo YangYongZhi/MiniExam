@@ -1,0 +1,49 @@
+<#include "../common/header.html">
+<#assign answeritem="com.maiyoule.miniexam.ui.template.AnswerItemTemplate"?new()>
+
+<div class="nav">当前位置：管理首页 &gt; 考试结果 &gt; 试卷作答</div>
+<div class="contral">
+	<input type="button" class="btn white" value="返回列表" onclick="location.href='${basePath}/contral/results/score';"/>
+</div>
+<div class="tables table-list">
+	<table class="changeColor" width="100%" cellspacing="0" cellpadding="0" border="0">
+		<thead>
+			<tr>
+				<td width="60%">试题</td>
+				<td width="10%" align="center">题库</td>
+				<td width="10%" align="center">题型</td>
+				<td width="10%" align="center">回答</td>
+				<td width="10%" align="center">是否正确</td>
+            </tr>
+		</thead>
+		<tbody>
+			<#if (lists.totalRow == 0)>
+				<tr>
+	       				<td colspan="5" align="center">没有找到试卷作答信息</td>
+	       			</tr>
+	 	  	<#else>
+	 	  		<#list lists.list as an>
+	 	  			${answeritem(an.id,an.exam_id,an.layout_id,an.question_id,an.status,an.label)}
+				</#list>
+			</#if>
+	
+	       
+	    </tbody>
+	    	
+	    	
+	    <tfoot>
+        	<tr>
+        		<td colspan="8">
+        	
+        				<div class="tab-page">
+                			<#include "../common/pages.html">
+				        	<ul class="l"></ul>
+         			   </div>
+		       	</td>
+        	</tr>
+        </tfoot>
+        						
+	</table>
+</div>
+
+<#include "../common/footer.html">

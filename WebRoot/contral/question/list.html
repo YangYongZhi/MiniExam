@@ -1,0 +1,175 @@
+<#include "../common/header.html">
+<div class="nav">
+当前位置：管理首页 &gt; 题库管理 &gt; ${library.name} &gt; 试题管理
+</div>
+
+<div class="contral">
+<form action="${basePath}/contral/ques">
+	<input type="hidden" name="libraryId" value="${qp.libraryId}"/>
+	<input type="button" value="返回题库" class="btn white" onclick="location.href='${basePath}/contral/lib';"/>
+			题型：
+		<select name="questionType">
+			<option value="">全部</option>
+			<option value="single" <#if qp.questionType =="single">selected="selected"</#if>>单选</option>
+			<option value="muti" <#if qp.questionType =="muti">selected="selected"</#if>>多选</option>
+			<option value="judge" <#if qp.questionType =="judge">selected="selected"</#if>>判断</option>
+		</select>
+		状态：
+		<select name="questionStatus">
+			<option value="-1">全部</option>
+			<option value="1" <#if qp.questionStatus ==1>selected="selected"</#if>>正常</option>
+			<option value="0" <#if qp.questionStatus ==0>selected="selected"</#if>>停用</option>
+		</select>
+	<input type="submit" value="筛选" class="btn blue"/>
+	<a href="${basePath}/contral/ques/add?libraryId=${library.id}">新增试题</a>
+	<a href="${basePath}/contral/ques/importfromfile?libraryId=${library.id}" class="btnimport">导入考题</a>
+	<a href="${basePath}/contral/ques/template" title="为了保证模版能正常下载，请使用右键另存为">下载试题模板</a>
+	</form>
+</div>
+<form action="${basePath}/contral/ques/opeart?${queryString}" method="post" id="listform">
+	<input type="hidden" name="op" value="" />
+	<input type="hidden" name="libid" value="${library.id}"/>
+	<div class="tables table-list">
+	<!--数据表格-->
+	<table class="datagrid" cellspacing="0" cellpadding="0" border="0">
+		<thead>
+			<tr>
+                <td width="5%" align="center">
+                	<input type="checkbox" onclick="checkAll(this.checked)" />
+                </td>
+				<td width="50%" align="center">试题内容</td>
+				<td width="10%" align="center">题型</td>
+				<td width="10%" align="center">状态</td>、
+				<td width="10%" align="center">操作</td>
+            </tr>
+		</thead>
+		<tbody>
+			<#if (lists.totalRow == 0)>
+				<tr>
+					<td align="center" colspan="6">没有找到记录...
+					</td>
+				</tr>
+			<#else>
+				<#list lists.list as question>
+				<tr>
+					<td align="center">
+						<input type="checkbox" class="cbitem"
+							name="questionIds" value="${question.id }" /></td>
+						<td>${question.title!''}&nbsp;</td>
+						<td align="center">
+							<#switch question.type>
+								<#case "single">
+								单选
+								<#break>
+								<#case "muti">
+								多选
+								<#break>
+								<#case "judge">
+								判断
+								<#break>
+								<#default>
+								-
+							</#switch>
+						</td>
+						<td align="center">
+							<#switch question.status>
+								<#case 1>
+								<font style="color:green;">正常</font>
+								<#break>
+								<#case 0>
+									停用
+								<#break>
+								<#default>
+									-
+							</#switch>
+						
+						
+						</td>
+						<td align="center">
+							<a href="${basePath}/contral/ques/update?id=${question.id}<#if queryString??>&${queryString}</#if>">编辑</a>
+							| 
+							<a href="${basePath}/contral/ques/del?id=${question.id}<#if queryString??>&${queryString}</#if>" class="delItem">删除</a></td>
+					</tr>
+				</#list>
+			</#if>
+		
+		
+		</tbody>
+		
+		<tfoot>
+			<tr>
+				<td colspan="6">
+				
+				<div class="tab-page">
+                       	<#include "../common/pages.html">
+                          <ul class="l">
+                              <li><input value="删除选中" onclick="submitform('delete')" type="button" class="btn white"/></li>
+                              <li><input value="停用选中" onclick="submitform('stop')" type="button" class="btn white"/></li>
+                              <li><input value="可用选中" onclick="submitform('open')" type="button" class="btn white"/></li>
+                           </ul>
+                       </div>
+				
+				
+				</td>
+	            </tr>
+	        </tfoot>
+	    </table>
+	</div>
+</form>
+	
+
+
+<script>
+	$(function() {
+		$(".delItem").click(function() {
+			var url=$(this).attr('href');
+			jConfirm('确定要删除该试题？',"确定",function(){
+				$.ajax({
+					"url":url,
+					"cache":false,
+					"type":"get",
+					"dataType":"json",
+					"success":function(data){
+						if(data.status){
+							window.location.reload();
+						}else{
+							jAlert(data.data,data.info);
+						}
+					},
+					"error":function(){
+						jAlert("删除失败，请检查网络连接");
+					}
+				});
+			});
+			return false;
+			//return confirm("确定要删除该试题？");
+		});
+		
+		$("#listform").ajaxForm({
+			"dataType":"json",
+			"success":function(data){
+				if(data.status){
+					window.location.reload();
+				}else{
+					jAlert(data.data,data.info);
+				}
+			},
+			"error":function(){
+				jAlert('操作失败，请检查网络连接');
+			}
+		});
+	});
+	
+	function submitform(op) {
+		$("input[name=op]").val(op);
+		
+		jConfirm('确定这样操作吗？',"确定",function(){
+			$("#listform").submit();
+		});
+	}
+
+	function checkAll(o) {
+		$(".cbitem").prop("checked", o ? true : false);
+	}
+</script>
+<#include "../common/footer.html">

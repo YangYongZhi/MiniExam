@@ -1,0 +1,25 @@
+/* CSS file */
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+@namespace ml "com.maiyoule.exam.layout.*";
+
+
+
+.examItemButtonFlish{
+	backgroundColor:green;
+	color:#ffffff;
+}
+
+.itemtitlelabel{
+	backgroundColor:"0xeeeeee";
+	paddingBottom:"3";
+	paddingLeft:"3";
+	paddingRight:"3";
+	paddingTop:"3";
+	
+}
+
+.itemcontainer{
+	borderVisible:true;
+	
+}

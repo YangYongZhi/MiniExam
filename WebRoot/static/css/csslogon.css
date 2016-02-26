@@ -1,0 +1,75 @@
+body {
+	margin-left: 0px;
+	margin-right: 0px;
+	height: 100%;
+	background-color: #dfdfdf;
+}
+ #body{
+	width:872px;
+	margin:17px auto 26px auto;
+	padding:0 34px 0 0;}
+
+.text {
+	font-family: "黑体";
+	font-size: 15px;
+	font-weight: bold;
+	color: #FFFFFF;
+	text-decoration: none;
+	text-align: center;
+	line-height: 26px;
+}
+.text2logon {
+	font-family: "宋体";
+	font-size: 14px;
+	line-height: 30px;
+	color: #FFFFFF;
+	text-decoration: none;
+}
+	
+.menu1{
+	width:231px;
+	height:40px;
+	position:absolute;
+	left:3px;
+	top:201px;}
+.bottomstyle {
+	font-family: "黑体";
+	font-size: 13px;
+	line-height: 28px;
+	color: #FFFFFF;
+	text-decoration: none;
+	display: block;
+	text-align: center;
+}
+.bottomstyle a {
+	font-family: "黑体";
+	font-size: 13px;
+	line-height: 26px;
+	color: #FFFFFF;
+	text-decoration: none;
+	background-image: url(images/logon/menu-b.jpg);
+	background-repeat: no-repeat;
+	background-position: center;
+	display: block;
+}
+.bottomstyle a:hover {
+	line-height: 26px;
+	font-weight: bold;
+	color: #FFFFFF;
+	text-decoration: none;
+	background-image: url(images/logon/menu-y.jpg);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "黑体";
+}
+.text3 {
+	font-family: "宋体";
+	font-size: 12px;
+	color: #C8DFF9;
+	text-decoration: none;
+	text-align: center;
+	line-height: 60px;
+	height: 68px;
+	width: 717px;
+}

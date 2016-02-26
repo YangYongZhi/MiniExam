@@ -1,0 +1,263 @@
+<#include "../common/header.html">
+<style>
+<!--
+.red{
+	border:solid 1px red;
+}
+-->
+</style>
+<div class="nav">当前位置：管理首页 &gt; 试卷管理 &gt; 修改</div>
+<div class="contral">
+	<input type="button" class="btn white" value="返回到列表" onclick="location.href='${basePath}/contral/papers';"/>
+</div>
+
+<form action="${basePath}/contral/papers/update" method="post">
+	<input type="hidden" name="id" value="${paper.id }" />
+	<input type="hidden" name="status" value="1"/>
+						
+	<div class="tables table-reg">
+		<table class="changeColor" cellspacing="0" cellpadding="0" border="0" width="100%">
+			<tbody>
+				<tr>
+					<td width="100" align="right">试卷名称：</td>
+					<td>${paper.name}</td>
+				</tr>
+				<tr>
+					<td align="right">试题来源：</td>
+					<td>
+						<#list librarys as lib>
+						<label><input type="checkbox" name="libs" value="${lib.id }" id="library_${lib.id}" data-name="${lib.name}"/>${lib.name}</label>
+						</#list>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">分值设定：</td>
+					<td>
+						单选：<input type="text" class="__isss" name="paperSingleScore" size="4" maxlength="4" value="${paper.single_score}"/> 
+						多选：<input type="text" class="__isss" name="paperMutiScore" size="4" maxlength="4" value="${paper.muti_score}"/> 
+						判断：<input type="text" class="__isss" name="paperJugeScore" size="4" maxlength="4" value="${paper.juge_score}"/>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">考题数量：</td>
+						<td colspan="3">
+							单选：<span><input class="__isss" name="paperSingleCount" size="4" maxlength="4" type="text" value="${paper.single_count}"/></span> 
+							多选：<span><input class="__isss" type="text" name="paperMutiCount" size="4" maxlength="4" value="${paper.muti_count}"/></span> 
+							判断：<span><input class="__isss" type="text" name="paperJugeCount" size="4" maxlength="4" value="${paper.juge_count}"/></span>
+						</td>
+					</tr>
+					<tr>
+						<td align="right">抽取比例：</td>
+						<td>
+							<table>
+								<thead>
+								<tr>
+									<td></td>
+									<td>单选(%)</td>
+									<td>多选(%)</td>
+									<td>判断(%)</td>
+									
+								</tr>
+									</thead>
+								<tbody id="paperscole">
+									
+								</tbody>
+							</table>
+							
+						</td>
+					</tr>
+					<tr>
+						<td align="right">试卷总分：</td>
+						<td>
+							<input type="text" name="paperScore" maxlength="4" size="4" value="${paper.score}"/>
+							
+						</td>
+					</tr>
+					<tr>
+						<td align="right">合格成绩：</td>
+						<td>
+							<input type="text" name="paperMinScore" maxlength="4" size="4" value="${paper.min_score}"/>
+						</td>
+					</tr>
+					<tr>
+						<td align="right">用户类型：</td>
+						<td>
+							<#list usertypes as utype>
+								<label>
+										<input type="checkbox" name="utype" value="${utype.id }"/>${utype.name }
+								</label>
+								<#if (utype_index%2==1)><br/></#if>
+							</#list>
+						</td>
+					</tr>
+				
+					<tr>
+						<td>&nbsp;</td>
+						<td><input type="submit" class="btn orange" value="保存"/></td>
+					</tr>
+			            
+			        </tbody>
+			    </table>
+			    <!-- 数据表格end -->
+				<div id="delpanel" style="display:none;"></div>
+				<div id="apppanel" style="display:none;"></div>
+				<div id="updatepanel" style="display:none;"></div>
+			</div>
+	</form>
+	<#list scales as scale>
+	<input type="hidden" class="hideitembilis" value="${scale.library_id}_${scale.scale_single}_${scale.scale_muti}_${scale.scale_juge}_${scale.id}" />
+	</#list>
+
+<script type="text/javascript">
+$(function(){
+	$("input[name=libs]").click(function(){
+		var val=$(this).val();
+		var name=$(this).attr("data-name");
+		if(this.checked){
+			//添加
+			var html='<tr id="__lib_'+val+'">';
+			html+='<td>'+name+'</td><td><input type="text" name="bili_single_'+val+'" size="4" maxlength="3" value="10"/></td>';
+			html+='<td><input type="text" name="bili_muti_'+val+'" size="4" maxlength="3" value="10"/></td>';
+			html+='<td><input type="text" name="bili_jugde_'+val+'" size="4" maxlength="3" value="10"/></td>';
+			html+='</tr>';
+			$("#paperscole").append(html);
+			//如果存在移除ID
+			var removeid=$(this).attr('removeid');
+			if(removeid){
+				if($("input[name=removeids][value="+removeid+"]").length>0){
+					$("input[name=removeids][value="+removeid+"]").remove();
+				}
+				if($("input[name=scale_update_"+val+"]").length<1){
+					html='<input type="hidden" name="scale_update_'+val+'" value="'+removeid+'"/>';
+					$("#updatepanel").append(html);
+				}
+			}else{
+				//添加且不存在移除ID，则为新增项
+				html='<input type="hidden" name="addscaleids" value="'+val+'"/>';
+				$("#apppanel").append(html);
+			}
+			
+		}else{
+			$("#__lib_"+val).remove();
+			//如果存在移除ID
+			var removeid=$(this).attr('removeid');
+			if(removeid){
+				if($("input[name=removeids][value="+removeid+"]").length<1){
+					$("#delpanel").append('<input type="hidden" name="removeids" value="'+removeid+'"/>');
+				}
+				if($("input[name=scale_update_"+val+"]").length>0){
+					$("input[name=scale_update_"+val+"]").remove();
+				}
+				
+			}
+		}
+	});
+
+	var hideitembilises=$(".hideitembilis");
+	for(var i=0;i<hideitembilises.length;i++){
+		var arr=hideitembilises[i].value.split('_');
+		
+		scaleset(arr[0],arr[1],arr[2],arr[3],arr[4]);
+	}
+	
+	
+	$(".__isss").keyup(function(){
+		cale();
+	});
+	
+	
+	//绑定选择
+	<#list bindusertypes as bindtype>
+		$("input[name=utype][value=${bindtype.user_type_id}]").prop("checked",true);
+	</#list>
+	
+	$("form").ajaxForm({
+		"dataType":"json",
+		"success":function(data){
+			if(data.status){
+				window.location.href=data.data;
+			}else{
+				jAlert(data.data,data.info);
+			}
+		},
+		"error":function(){
+			jAlert('保存失败，请检查网络连接');
+		}
+	});
+});
+
+function scaleset(id,single,muti,judge,sid){
+	$("input[name=libs][value="+id+"]").attr("checked",true);
+	$("input[name=libs][value="+id+"]").attr('removeid',sid);
+	
+	var name=$("#library_"+id).attr('data-name');
+	
+	var html='<tr id="__lib_'+id+'">';
+	html+="<td>"+name+"</td>";
+	html+='<td><input type="input" name="bili_single_'+id+'" value="'+single+'" size="4" maxlength="3"></td>';
+	html+='<td><input type="input" name="bili_muti_'+id+'" value="'+muti+'" size="4" maxlength="3"></td>';
+	html+='<td><input type="input" name="bili_jugde_'+id+'" value="'+judge+'" size="4" maxlength="3"></td>';
+	html+="</td>";
+	
+	$("#paperscole").append(html);
+	
+	html='<input type="hidden" name="scale_update_'+id+'" value="'+sid+'"/>';
+	$("#updatepanel").append(html);
+	
+}
+
+
+function cale(){
+	var single= $("input[name=paperSingleScore]").val();
+	if(!isNum(single)){
+		$("input[name=paperSingleScore]").addClass('red');
+		return;
+	}else{
+		$("input[name=paperSingleScore]").removeClass('red');
+	}
+	var muti=$("input[name=paperMutiScore]").val();
+	if(!isNum(muti)){
+		$("input[name=paperMutiScore]").addClass('red');
+		return;
+	}else{
+		$("input[name=paperMutiScore]").removeClass('red');
+	}
+	var jugde=$("input[name=paperJugeScore]").val();
+	if(!isNum(jugde)){
+		$("input[name=paperJugeScore]").addClass('red');
+	}else{
+		$("input[name=paperJugeScore]").removeClass('red');
+	}
+	
+	//个数
+	var singlec=$("input[name=paperSingleCount]").val();
+	var mutic=$("input[name=paperMutiCount]").val();
+	var jugdec=$("input[name=paperJugeCount]").val();
+	if(!isNum(singlec)){
+		$("input[name=paperSingleCount]").addClass('red');
+		return;
+	}else{
+		$("input[name=paperSingleCount]").removeClass('red');
+	}
+	if(!isNum(mutic)){
+		$("input[name=paperMutiCount]").addClass('red');
+		return;
+	}else{
+		$("input[name=paperMutiScore]").removeClass('red');
+	}
+	if(!isNum(jugdec)){
+		$("input[name=paperJugeCount]").addClass('red');
+	}else{
+		$("input[name=paperJugeCount]").removeClass('red');
+	}
+	//计算
+	$("input[name=paperScore]").val((single*singlec)+(muti*mutic)+(jugde*jugdec));
+}
+
+function isNum(str){
+	var reg=/^[0-9]*[1-9][0-9]*$/;
+	return reg.test(str);
+}
+</script>
+
+<#include "../common/footer.html">

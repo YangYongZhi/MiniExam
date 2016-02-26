@@ -1,0 +1,86 @@
+<#include "../common/header.html">
+<#assign usertype="com.maiyoule.miniexam.ui.template.UserTypeNameTemplate"?new()>
+<#assign bankname="com.maiyoule.miniexam.ui.template.BankTemplate"?new()>
+<#assign userinfo="com.maiyoule.miniexam.ui.template.UserTemplate"?new()>
+<#assign areas="com.maiyoule.miniexam.ui.template.AreaTemplate"?new()>
+<script type="text/javascript" src="${basePath}/static/cxSelect/js/jquery.cxselect.min.js"></script>
+<div class="nav">当前位置：管理首页 &gt; 考试结果 &gt; 缺考统计</div>
+
+<div class="contral">
+	
+	<form action="${basePath}/contral/results/absent/users">
+		<input type="hidden" name="layoutid" value="${layoutid}">
+		<span id="selectdom">
+			<#list fillbanks as bankv>
+			<select class="bank_${bankv_index}" name="ubankNo" data-value="${bankv}" disabled="disabled"></select>
+			</#list>
+		</span>
+		<input type="submit" class="btn blue" value="筛选"/>
+	</form>
+	
+	
+</div>
+
+<div class="tables table-list">
+	<table class="changeColor" width="100%" cellspacing="0" cellpadding="0" border="0">
+		<thead>
+			<tr>
+					<td width="10%" align="center">姓名</td>
+					<td width="15%">准考号</td>
+					<td width="39%">所在金融机构</td>
+					<td width="13%" align="center">用户类型</td>
+			        <td width="23%" align="center">考试时间</td>
+			
+            </tr>
+		</thead>
+		
+		<tbody>
+			
+			<#if (lists.totalRow == 0)>
+				<tr>
+	       				<td colspan="5" align="center">没有考试用户</td>
+	       			</tr>
+				<#else>
+	 	  		<#list lists.list as layout>
+	 	  			<tr>
+	       					<td align="center">${userinfo(layout.cardno)}</td>
+	       					<td align="center">${layout.cardno}</td>
+	       					<td>${bankname(layout.bankno)}</td>
+	       					<td align="center">${usertype(layout.utype)}</td>
+	       					<td align="center">${layout.start_time?number_to_datetime}<br/>${layout.end_time?number_to_datetime}</td>
+	       					
+	       					
+	       				</tr>
+				</#list>
+			</#if>						
+       	
+           
+        </tbody>
+        <tfoot>
+        	<tr>
+        		<td colspan="5">
+        	
+        				<div class="tab-page">
+                			<#include "../common/pages.html">
+				        	<ul class="l"></ul>
+         			   </div>
+		       	</td>
+        	</tr>
+        </tfoot>
+    </table>
+</div>
+<script type="text/javascript">
+
+	$(function(){
+	$("#selectdom").cxSelect({
+			"selects":['bank_0','bank_1','bank_2','bank_3','bank_4','bank_5','bank_6','bank_7','bank_8','bank_9'],
+			"nodata":'none',
+			"firstValue":'',
+			"firstTitle":"全部",
+			"url":${treecbox!'{}'}
+		});
+	});
+
+</script>
+	
+<#include "../common/footer.html">

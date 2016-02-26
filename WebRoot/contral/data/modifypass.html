@@ -1,0 +1,47 @@
+<#include "../common/header.html">
+<div class="nav">当前位置：管理首页 &gt; 系统功能 &gt; 用户管理 &gt; 修改密码</div>
+
+<div class="tables table-list">
+<form action="${basePath}/contral/data/domodifypass" method="post">
+<table style="width:100%;" cellspacing="0" cellpadding="0" align="center" border="0">
+	<tbody>
+		<tr>
+			<td width="20%">
+				修改密码：
+			</td>
+			<td>&nbsp;&nbsp;
+			</td>
+		</tr>
+		<tr>
+			<td>
+				原密码：
+			</td>
+			<td>
+				<input type="password" name="oldpass"/>
+			</td>
+		</tr>
+		<tr>
+			<td>新密码：</td>
+			<td>
+				<input type="password" name="pass"/>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>确认新密码：</td>
+			<td>
+				<input type="password" name="passagain"/>
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>
+				<input type="submit" class="btn blue" value="修改"/>
+			</td>
+		</tr>
+
+	</tbody>
+</table>
+</form>
+</div>
+<#include "../common/footer.html">

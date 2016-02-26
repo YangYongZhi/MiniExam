@@ -1,0 +1,34 @@
+﻿<ul class="r">
+    <li><span>[<b>${lists.totalRow}</b>]条记录 当前[${lists.pageNumber}/${lists.totalPage}]页 </span></li>
+    <#if (lists.pageNumber-1 >= 1)>
+	<li><a href="?page=${lists.pageNumber-1}<#if queryString??>&${queryString}</#if>">前一页</a></li>
+	</#if>
+	<#assign s=1>
+	<#assign e=lists.totalPage>
+	<#if (lists.pageNumber-3 >= 1)>
+		<li><a href="?page=1<#if queryString??>&${queryString}</#if>">1</a></li>
+		<li>...</li>
+		<#assign s=(lists.pageNumber-3)>
+	</#if>
+	
+	<#if (lists.pageNumber+3 < lists.totalPage)>
+		<#assign e=(lists.pageNumber+3)>
+	</#if>
+	
+	<#list s..e as i>
+		<#if (i==lists.pageNumber)>
+		<li><b>${i}</b></li>
+		<#else>
+		<li><a href="?page=${i}<#if queryString??>&${queryString}</#if>">${i}</a></li>
+		</#if>
+	</#list>
+	
+	<#if (lists.pageNumber+3 <= lists.totalPage)>
+		<li>...</li>
+		<li><a href="?page=${lists.totalPage}<#if queryString??>&${queryString}</#if>">${lists.totalPage}</a></li>
+	
+	</#if>
+	<#if (lists.pageNumber+1 <= lists.totalPage)>
+	<li><a href="?page=${lists.pageNumber+1}<#if queryString??>&${queryString}</#if>">下一页</a></li>
+	</#if>
+</ul>

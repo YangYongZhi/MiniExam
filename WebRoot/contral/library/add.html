@@ -1,0 +1,43 @@
+﻿<#include "../common/header.html">
+<script type="text/javascript">
+
+$(function(){
+	$("form").ajaxForm({"dataType":"json","success":function(data){
+		if(data.status){
+			window.location.href=data.data;
+		}else{
+			jAlert(data.data);
+		}
+	},"error":function(){
+		jAlert("提交数据失败");
+	}});
+});
+
+</script>
+
+<div class="nav">当前位置：管理首页 &gt; 题库管理 &gt; 题库 &gt; 新增</div>
+
+<div class="contral">
+	<input type="button" class="btn white" value="返回列表" onclick="location.href='${basePath}/contral/lib';"/>
+</div>
+
+<form action="${basePath}/contral/lib/insert" method="post">
+	<div class="tables table-reg">
+		 <table border="0" cellspacing="0" cellpadding="0" width="100%" class="changeColor">
+			<tbody>
+				
+	          <tr>
+				<td width="60" align="right"> <b>名称:</b>
+				</td>
+				<td><input class="txt2" type="text" name="libname"/></td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td><input type="submit" class="btn orange" value="提交"/></td>
+			</tr>
+	        </tbody>
+	    </table>
+	 </div>
+</form>
+			
+<#include "../common/footer.html">

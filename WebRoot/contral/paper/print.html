@@ -1,0 +1,148 @@
+<#assign counter=1>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<title>${genpaper.name }</title>
+<style type="text/css">
+body {
+	font-size: 14px;
+	line-height: 25px;
+	font-family:"Microsoft YaHei",Arial,Helvetica,sans-serif,"宋体";
+}
+
+.lineboxtitle {
+	
+}
+
+.question {
+	padding-left: 10px;
+}
+
+.question .answerbox {
+	padding-left: 10px;
+}
+
+.question p {
+	margin: 3px;
+	padding: 3px;
+}
+
+.pageTitle {
+	text-align: center;
+}
+
+.pageTitle h1 {
+	font-size: 24px;
+	margin: 0px;
+	padding: 0px;
+}
+
+.pageTitle p {
+	margin: 0px;
+	padding: 0px;
+}
+
+table td{padding-left:5px;padding-right:5px;}
+</style>
+</head>
+
+<body>
+	<div class="pageTitle">
+		<h1>${genpaper.name }</h1>
+		<p>总分 ${genpaper.scores.total } 分 ${genpaper.scores.pass }分及格</p>
+		<p>姓名：________  准考证号：________________________   成绩：_____________</p>
+	</div>
+	
+	<#if genpaper.question.radio??>
+		<div class="lineboxtitle">一、单选题（共计 ${singlecount } 题，每题 ${genpaper.scores.radio } 分）</div>
+		
+		<#list genpaper.question.radio as radio>
+			<div class="question">
+				<p>${counter}. ${radio.title }</p>
+				<div class="answerbox">
+					<table>
+						<#if (radio.answermaxlength<10)>
+							<tr>
+								<#list radio.answer as answer>
+								<td>${answer.label }</td>
+								</#list>
+							</tr>
+						<#elseif (radio.answermaxlength <20)>
+							<#list radio.answer as answer>
+								<#if (answer_index%2==0)>
+								<tr>
+								</#if>
+								<td>${answer.label }</td>
+										
+								<#if (answer_index%2==1)>
+								</tr>
+								</#if>
+							</#list>
+						<#else>
+							<#list radio.answer as answer>
+								<tr>
+									<td>${answer.label }</td>
+								</tr>
+							</#list>
+						</#if>
+					</table>
+				</div>
+			</div>
+			<#assign counter=counter+1>
+		</#list>
+	</#if>
+	
+	
+	
+	<#if genpaper.question.multi??>
+		<div class="lineboxtitle">二、多选题（共计 ${multicount } 题，每题 ${genpaper.scores.multi } 分）</div>
+		<#list genpaper.question.multi as multi>
+			<div class="question">
+				<p>${counter}. ${multi.title }</p>
+				<div class="answerbox">
+					<table>
+						<#if (multi.answermaxlength <10)>
+							<tr>
+								<#list multi.answer as answer>
+									<td>${answer.label }</td>
+								</#list>
+							</tr>
+						<#elseif (multi.answermaxlength <20)>
+							<#list multi.answer as answer>
+								<#if (answer_index%2==0)>
+								<tr>
+								</#if>
+								<td>${answer.label }</td>
+										
+								<#if (answer_index%2==1)>
+								</tr>
+								</#if>
+							</#list>
+						<#else>
+							<#list multi.answer as answer>
+								<tr>
+									<td>${answer.label }</td>
+								</tr>
+							</#list>
+						</#if>
+					</table>
+				</div>
+			</div>
+			<#assign counter=counter+1>
+		</#list>
+	</#if>
+	
+	
+	<#if genpaper.question.judge??>
+		<div class="lineboxtitle">三、判断题（共计 ${judgecount } 题，每题 ${genpaper.scores.judge } 分）</div>
+		<#list genpaper.question.judge as judge>
+			<div class="question">
+			<p>${counter}. ${judge.title } 	&nbsp;&nbsp;&nbsp;&nbsp;	（&nbsp;&nbsp;）</p>
+			</div>
+			<#assign counter=counter+1>
+		</#list>
+	</#if>
+	</body>
+</html>

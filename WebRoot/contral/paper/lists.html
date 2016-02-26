@@ -1,0 +1,62 @@
+﻿<#include "../common/header.html">
+<div class="nav">当前位置：管理首页 &gt; 试卷管理 &gt; 试卷列表</div>
+
+<!--数据表格-->
+<div class="tables table-list">
+	<table class="changeColor" width="100%" cellspacing="0" cellpadding="0" border="0">
+		<thead>
+		<tr>
+              	<td width="50%">试卷名称</td>
+		        <td width="15%" align="center">总分/合格</td>
+		        <td width="15%" align="center">题量/分值</td>
+		        <td width="20%" align="center">操作</td>
+            </tr>
+		</thead>
+		<tbody>
+			<#list papers as paper>
+				<tr>
+           			<td>${paper.name }</td>
+           			
+           			
+           			<td align="center">
+           				${paper.score } / ${paper.min_score }
+           			</td>
+           			<td align="center">
+           				单选：${paper.single_count } / ${paper.single_score }<br/>
+           				多选：${paper.muti_count } / ${paper.muti_score }<br/>
+           				判断：${paper.juge_count } / ${paper.juge_score }
+           			</td>
+           			
+           			<td align="center">
+           				<a href="${basePath}/contral/papers/edit?id=${paper.id}">编辑</a> | 
+           				<a href="${basePath}/contral/papers/printer?id=${paper.id}" target="_blank" class="btnprint">试卷打印</a>
+           			</td>
+           		</tr>
+			</#list>
+			
+        </tbody>
+        
+        <tfoot>
+        	<tr>
+				<td colspan="4">
+				&nbsp;
+				</td>
+			</tr>
+        </tfoot>
+        
+    </table>
+</div>
+					    
+	
+	
+	
+<script type="text/javascript">
+
+	$(function(){
+		$(".btnprint").click(function(){
+			return confirm("提示：\r\n每次进入试卷打印是会随机生成试题，若需要打印不同试卷，只需要在试卷打印页面刷新一次即可。\r\n\r\n要进入试卷打印吗？");
+		});
+	});
+
+</script>
+<#include "../common/footer.html">

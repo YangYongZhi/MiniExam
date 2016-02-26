@@ -1,0 +1,126 @@
+<#include "../common/header.html">
+<#assign usertype="com.maiyoule.miniexam.ui.template.UserTypeNameTemplate"?new()>
+<#assign bankname="com.maiyoule.miniexam.ui.template.BankTemplate"?new()>
+<#assign userinfo="com.maiyoule.miniexam.ui.template.UserTemplate"?new()>
+<script type="text/javascript" src="${basePath}/static/lhgdialog/lhgcore.lhgdialog.min.js"></script>
+<script type="text/javascript" src="${basePath}/static/lhgdialog/lhgdialog.min.js"></script>
+<script type="text/javascript" src="${basePath}/static/js/examfilter.js"></script>
+	<div class="nav">当前位置：管理首页 &gt; 考试管理 &gt; 考试时间 &gt; 考试人员</div>
+	
+	<div class="contral">
+		<form action="${basePath}/contral/layouts/queryusers?layout_id=${layout.id}" method="post">
+			<input type="button" class="btn white" value="返回列表" onclick="location.href='${basePath}/contral/layouts/';"/>
+		准考证号：<input type="text" name="cardno" value=""/>
+		金融机构编码：<input type="text" size="14" name="bankno" value=""/>
+		<input type="submit" class="btn blue" value="查找"/>
+		</form>
+	</div>
+	<div class="contral">
+		安排时间：${layout.start_time?number_to_datetime} ~ ${layout.end_time?number_to_datetime}
+	</div>
+	<!--数据表格-->
+	<div class="tables table-list">
+		<form id="deleteCheckedForm" action="${basePath}/contral/layouts/removeSelectUser?layout_id=${layout.id}" method="post">
+		<table class="changeColor" width="100%" cellspacing="0" cellpadding="0" border="0">
+			<thead>
+				<tr>
+					<td width="3%" align="center"><input type="checkbox" id="selectall"/></td>
+					<td width="8%" align="center">姓名</td>
+					<td width="15%">准考号</td>
+					<td width="20%">所在金融机构</td>
+			        <td width="20%" align="center">生成时间</td>
+		        	<td width="16%" align="center">操作</td>
+	            </tr>
+			</thead>
+			<tbody>
+				
+			<#if (lists.totalRow == 0)>
+				<tr>
+	       			<td colspan="8" align="center">没有考试用户</td>
+	       		</tr>
+			<#else>
+			<#list lists.list as exam>
+				<tr>
+	       			<td align="center"><input type="checkbox" name="ids" value="${exam.id }" class="cbitems"/></td>
+	       			<td align="center">${userinfo(exam.cardno)}</td>
+	       					<td align="center">${exam.cardno }</td>
+	       				
+	       					<td>${bankname(exam.bankno)}</td>
+	       					<td align="center">${exam.sign?eval?number_to_datetime}</td>
+	       					<td align="center">
+	       						<a href="${basePath}/contral/layouts/removeUser?id=${exam.id}" class="delitem">移除</a>
+	       					</td>
+	       				</tr>
+			</#list>
+			</#if>
+	        </tbody>
+	        
+	        <tfoot>
+	        	<tr>
+	        		<td colspan="9">
+	        			<div class="tab-page">
+                       	
+                       	<#include "../common/pages.html">
+                         
+	        				<ul class="l">
+	        					<li><input type="button" id="btnSubmit" value="删除选中" class="btn white"/></li>
+                            </ul>
+                     </div>
+		        	</td>
+	        	</tr>
+	        </tfoot>
+	    </table>
+	    </form>
+   	</div>
+   <!-- 数据表格end -->
+   	       
+<script type="text/javascript">
+	
+	$(function(){
+		$(".delitem").click(function(){
+			var url=$(this).attr('href');
+			jConfirm("移除时将同时删除该用户的相关数据，确定移除？","确定",function(){
+				$.get(url,{},function(data){
+					if(data.status){
+						jAlert(data.data,data.info,function(){
+							window.location.reload();
+						});
+					}else{
+						jAlert(data.data,data.info);
+					}
+				},"json");
+			});
+			return false;
+		});
+		$("#selectall").change(function(){
+			$(".cbitems").prop("checked",this.checked);
+		});
+		
+		$("#deleteCheckedForm").ajaxForm({
+			"dataType":"json",
+			"success":function(data){
+				if(data.status){
+					jAlert(data.data,data.info,function(){
+						window.location.reload();
+					});
+				}else{
+					jAlert(data.data,data.info);
+				}
+			},
+			"error":function(){
+				jAlert('移除失败，请稍后再试');
+			}
+		});
+		
+		$("#btnSubmit").click(function(){
+			jConfirm("确定移除选中的用户吗？","确定",function(){
+				$("#deleteCheckedForm").submit();
+			});
+			return false;
+		});
+	});
+	
+</script>
+	
+	
+<#include "../common/footer.html">

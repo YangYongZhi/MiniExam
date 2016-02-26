@@ -1,0 +1,86 @@
+<#include "../common/header.html">
+<div class="nav">当前位置：管理首页 &gt; 系统功能 &gt; 数据库操作</div>
+
+<div class="tables table-list">
+<table style="width:100%;" cellspacing="0" cellpadding="0" align="center" >
+		<tr>
+			<td>
+				<fieldset>
+					<legend>清空考试数据</legend>
+					<table style="width:100%;">
+						<tr>
+							<td>
+								<strong><font color='red'>
+									“清空考试数据”操作将清空所有的考试安排及生成的考试人员，请慎用！！！
+								</font></strong>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<strong><font color='red'>
+									操作前请确保需要导出的数据已经全部导出！！！
+								</font></strong>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input type="button" id="btnRecover" class="btn blue" value="清空考试数据"/>
+							</td>
+						</tr>
+					</table>
+				</fieldset>
+				<br/>
+				<br/>
+				<fieldset>
+					<legend>压缩数据</legend>
+					<table>
+						<tr>
+							<td>
+								<input type="button" id="btnExpress" class="btn blue" value="压缩数据"/>
+							</td>
+						</tr>
+					</table>
+				</fieldset> 
+			</td>
+		</tr>
+
+</table>
+</div>
+
+<script type="text/javascript">
+	
+	$(function(){
+		$("#btnRecover").click(function(){
+			jConfirm("确定要清空考试数据吗？","提示",function(){
+				$.ajax({
+					"url":"${basePath}/contral/config/dorecoverdb",
+					"dataType":"json",
+					"error" : function() {
+						jAlert("清空考试数据失败，请稍后再试！");
+					},
+					"success":function(data){
+						jAlert(data.data,data.info);
+					}
+				});
+			});
+		});
+		
+		$("#btnExpress").click(function(){
+			jConfirm("压缩数据库一般在考试完成或访问缓慢时进行，因压缩数据库时会拒绝其它用户访问，请确保无其它用户使用该程序，确定压缩吗？","提示",function(){
+				$.ajax({
+					"url":"${basePath}/contral/ajax/dbVACUUM",
+					"dataType":"json",
+					"error" : function() {
+						jAlert("压缩数据失败，请稍后再试！");
+					},
+					"success":function(data){
+						jAlert(data.data,data.info);
+					}
+				});
+			});
+		});
+	});
+	
+</script>
+
+<#include "../common/footer.html">

@@ -1,0 +1,72 @@
+<#include "../common/header.html">
+<#assign bili="com.maiyoule.miniexam.ui.template.QuestionAnalysisTemplate"?new()>
+<#assign library="com.maiyoule.miniexam.ui.template.QuestionLibraryTemplate"?new()>
+
+<div class="nav">当前位置：管理首页 &gt; 考试结果 &gt; 试题分析</div>
+<div class="contral">
+
+	<form action="${basePath}/contral/results/analysis">
+题库：<select name="lid">
+<option value="">全部</option>
+<#list librarys as lib>
+<option value="${lib.id}" <#if lid==lib.id>selected="selected"</#if>>${lib.name}</option>
+</#list>
+</select>
+类型：<select name="type">
+<option value="">全部</option>
+<option value="single" <#if type=='single'>selected="selected"</#if>>单选</option>
+<option value="muti" <#if type=='muti'>selected="selected"</#if>>多选</option>
+<option value="judge" <#if type=='judge'>selected="selected"</#if>>判断</option>
+</select>
+
+		<input type="submit" value="搜索" class="btn white"/>&nbsp;&nbsp;
+</form>
+</div>
+<div class="tables table-list">
+	<table class="changeColor" width="100%" cellspacing="0" cellpadding="0" border="0">
+		<thead>
+			<tr>
+				<td width="80%">试题</td>
+				<td width="10%" align="center">题库</td>
+				<td width="10%" align="center">合格率</td>
+            </tr>
+		</thead>
+		<tbody>
+			<#if (lists.totalRow == 0)>
+				<tr>
+	   				<td colspan="3" align="center">没有试题</td>
+	   			</tr>
+	 	  	<#else>
+	 	  		<#list lists.list as question>
+				<tr>
+	   					<td>
+	   						${question.title }
+	   					</td>
+	   					<td align="center">${library(question.libid)}</td>
+	   					<td align="center">
+	   						${bili(question.id)}%
+	   					</td>
+	   				
+	   				</tr>
+				</#list>
+			</#if>
+	   	
+	    </tbody>
+	    	
+	    	
+	    <tfoot>
+        	<tr>
+        		<td colspan="8">
+        	
+        				<div class="tab-page">
+        					<#include "../common/pages.html">
+				        	<ul class="l"></ul>
+         			   </div>
+		       	</td>
+        	</tr>
+        </tfoot>
+        						
+	</table>
+</div>
+	
+<#include "../common/footer.html">

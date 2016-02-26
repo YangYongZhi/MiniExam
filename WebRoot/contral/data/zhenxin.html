@@ -1,0 +1,29 @@
+<#include "../common/header.html">
+<div class="nav">当前位置：管理首页 &gt; 系统功能 &gt; 导入与导出 &gt; 分析数据导出</div>
+
+
+<form action="${basePath}/contral/data/doExportZhenxin" method="post">
+	<div class="tables table-reg">
+		<table class="changeColor" cellspacing="0" cellpadding="0" border="0" width="100%">
+			<tbody>
+				
+	          <tr>
+				<td width="100" align="right">选择考试安排：</td>
+				<td>
+				<#list layouts as layout>
+				<label><input type="checkbox" name="id" value="${layout.id}" />${layout.start_time?number_to_datetime} ~ ${layout.end_time?number_to_datetime}</label>
+			</#list>
+				</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td><input type="submit" class="btn orange" value="导出"/></td>
+			</tr>
+	            
+	        </tbody>
+	    </table>
+	    <!-- 数据表格end -->
+	</div>
+</form>
+
+<#include "../common/footer.html">

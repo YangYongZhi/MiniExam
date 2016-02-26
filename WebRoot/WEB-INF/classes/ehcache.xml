@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="ehcache.xsd" updateCheck="false"
+	monitoring="autodetect" dynamicConfig="true">
+
+	<diskStore path="./cache" />
+
+	<defaultCache maxEntriesLocalHeap="10000" eternal="false"
+		timeToIdleSeconds="120" timeToLiveSeconds="120" overflowToDisk="true"
+		maxEntriesLocalDisk="10000000" diskPersistent="true"
+		diskExpiryThreadIntervalSeconds="120" memoryStoreEvictionPolicy="LRU" />
+
+	<!-- 地区 -->
+	<cache name="areacache" maxEntriesLocalHeap="10000"
+		maxEntriesLocalDisk="10000" eternal="false" overflowToDisk="true"
+		timeToIdleSeconds="900" timeToLiveSeconds="1800"
+		memoryStoreEvictionPolicy="LFU" />
+	<!-- 银行 -->
+	<cache name="bankcache" maxEntriesLocalHeap="10000"
+		maxEntriesLocalDisk="20000" eternal="false" overflowToDisk="true"
+		timeToIdleSeconds="900" timeToLiveSeconds="1800"
+		memoryStoreEvictionPolicy="LFU" />
+	<!-- 用户类型 -->
+	<cache name="utypecache" maxEntriesLocalHeap="20"
+		maxEntriesLocalDisk="100" eternal="true" overflowToDisk="true"
+		memoryStoreEvictionPolicy="LFU" />
+
+	<!-- 银行类型 -->
+	<cache name="orgtypes" maxEntriesLocalHeap="20"
+		maxEntriesLocalDisk="100" eternal="true" overflowToDisk="true"
+		memoryStoreEvictionPolicy="LFU"></cache>
+
+	<!-- 区域计数缓存 -->
+	<cache name="areacount" maxEntriesLocalHeap="200"
+		maxEntriesLocalDisk="500" eternal="false" overflowToDisk="true"
+		timeToIdleSeconds="180" timeToLiveSeconds="360"
+		memoryStoreEvictionPolicy="LFU"></cache>
+	<!-- 用户Cache -->
+	<cache name="userinfos" maxEntriesLocalHeap="5000"
+		maxEntriesLocalDisk="20000" eternal="false" overflowToDisk="true"
+		timeToIdleSeconds="1800" timeToLiveSeconds="10800"
+		memoryStoreEvictionPolicy="LFU"></cache>
+	<!-- 用户试卷 -->
+	<cache name="userpaper" maxEntriesLocalHeap="50"
+		maxEntriesLocalDisk="100" eternal="true" overflowToDisk="true"></cache>
+
+	<!-- 考试安排 -->
+	<cache name="layouts" maxEntriesLocalHeap="50"
+		maxEntriesLocalDisk="100" eternal="false" overflowToDisk="true"
+		timeToIdleSeconds="900" timeToLiveSeconds="1800"></cache>
+
+	<!-- 考试 -->
+	<cache name="exams" maxEntriesLocalHeap="1" maxEntriesLocalDisk="0"
+	eternal="true" diskPersistent="true"></cache>
+
+	<!-- 配置 -->
+	<cache name="config" maxEntriesLocalHeap="1" maxEntriesLocalDisk="0"
+		eternal="true" overflowToDisk="true"></cache>
+		<!-- 试题回答统计 -->
+	<cache name="answer" 
+		maxEntriesLocalHeap="300" 
+		maxEntriesLocalDisk="500" eternal="false" overflowToDisk="true"
+		timeToIdleSeconds="1800" timeToLiveSeconds="10800"
+		memoryStoreEvictionPolicy="LFU"></cache>
+	<cache name="questions" 
+		maxEntriesLocalHeap="300" 
+		maxEntriesLocalDisk="500" eternal="false" overflowToDisk="true"
+		timeToIdleSeconds="1800" timeToLiveSeconds="10800"
+		memoryStoreEvictionPolicy="LFU"></cache>
+</ehcache>

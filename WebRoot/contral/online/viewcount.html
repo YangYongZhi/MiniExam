@@ -1,0 +1,49 @@
+<#include "../common/header.html">
+<div class="nav">当前位置：管理首页 &gt; 考试管理 &gt; 考试状态 &gt; 人数统计</div>
+<div class="contral">
+	<form action="${basePath}/contral/online/viewcount" method="get">
+		查看时间段：
+		<select name="layoutid">
+			<option value="">全部</option>
+			
+			<#list layouts as exlayout>
+			<option value="${exlayout.id }" 
+				<#if exlayout.id==layoutid>
+				selected="selected"
+				</#if>
+				>${exlayout.start_time?number_to_datetime} ~ ${exlayout.end_time?number_to_datetime}</option>
+			</#list>
+		
+		</select>
+		<input type="submit" value="查询" class="btn white"/>&nbsp;&nbsp;<a href="${basePath}/contral/online">在线情况</a>&nbsp;&nbsp;<a href="${basePath}/contral/online/viewcount">人数统计</a>
+	</form>
+</div>
+<div class="tables table-list">
+	<table class="changeColor" width="100%" cellspacing="0" cellpadding="0" border="0">
+		<thead>
+			<tr>
+				<td width="30%">试卷</td>
+				<td width="15%">总参考人数</td>
+				<td width="15%">正在考试人数</td>
+				<td width="20%">已交卷人数</td>
+				<td width="20%">未开始考试人数</td>
+            </tr>
+		</thead>
+		<tbody>
+		
+			<#list counters as c>
+				<tr>
+	   					<td align="center">${c.paperName }</td>
+	   					<td align="center">${c.total }</td>
+	   					<td align="center">${c.doing }</td>
+	   					<td align="center">${c.flish }</td>
+	   					<td align="center">${c.emptycount }</td>
+	   				</tr>
+			</#list>
+		
+	       
+	    </tbody>
+	</table>
+</div>
+	
+<#include "../common/footer.html">

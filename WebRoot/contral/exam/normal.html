@@ -1,0 +1,273 @@
+<#include "../common/header.html">
+<div class="nav">当前位置：管理首页 &gt; 考试管理 &gt; 生成考试人员 &gt 指定生成</div>
+<div class="contral">
+	<input type="button" class="btn white" value="返回生成列表" onclick="history.back(-1);">
+</div>			
+<form action="${basePath}/contral/exam/gennormal" method="post">
+	<div class="tables table-reg">
+		<table class="changeColor" cellspacing="0" cellpadding="0" border="0" width="100%">
+			<tbody>
+
+				<tr>
+					<td style="width:100px;">地区:</td>
+					<td>
+						<select name="uprovince" disabled="disabled"></select>
+						<select	name="ucity" disabled="disabled">
+							<option value="">全部</option>
+						</select>
+						<select	name="ucountry" disabled="disabled">
+							<option value="">全部</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>机构类型：</td>
+					<td>
+						<select name="orgtype" disabled="disabled">
+							<option value="">全部</option>
+							<#list orgtypes as orgt>
+								<option value="${orgt.no}">${orgt.name}</option>
+							</#list>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>金融机构：</td>
+					<td id="bank_node_0">
+						<select><option>全部</option></select>
+					</td>
+				</tr>
+				<tr>
+					<td>用户类型：</td>
+					<td>
+						<select name="utype" disabled="disabled">
+							<option value="0">全部</option>
+							<#list utypes as ut>
+								<option value="${ut.id}">${ut.name}</option>
+							</#list>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>准考证号：</td>
+					<td>
+						<input type="text" name="ucardno" value="" readonly="readonly"/>
+					</td>
+				</tr>
+				
+				<tr>
+					<td colspan="2" align="center"><input type="submit"
+						value="生成" class="btn orange btnSubmit" /></td>
+				</tr>
+				<tr>
+					<td colspan="2" ><div id="tipsshow"></div></td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</form>
+
+
+<script type="text/javascript">
+	function queryusers() {
+		var uprovince = $("select[name=uprovince]").val();
+		var ucity = $("select[name=ucity]").val();
+		var ucountry = $("select[name=ucountry]").val();
+
+		if( confirm("提醒：\r\n1.在生成完成之前请留在当前页面并不要点击其他功能，否则将会导致生成数据不完整！\r\n2.当用户较多时，生成过程会比较耗时，通常会需要几十秒到几分钟\r\n确定生成吗？")){
+			$(".btnSubmit").attr('disabled',"true");
+			$("#tipsshow").html("正在生成，请稍后...");
+			return true;
+		}
+		return false;
+
+	}
+
+	$(function() {
+		//获取地区
+		$.get(
+			"${basePath}/contral/ajax/area?parent=0",
+			{},
+			function(data) {
+				if (data.status) {
+					var html = '<option value="">全部</option>';
+					for ( var i = 0; i < data.data.length; i++) {
+						html += "<option value=";
+						html+=data.data[i].id;
+						html+=">";
+						html += data.data[i].name;
+						html += "</option>";
+					}
+					$("select[name=uprovince]").append(html);
+				}
+			},
+			"json"
+		);
+
+		$("select[name=uprovince]").change(
+			function() {
+				var val = $(this).val();
+				if (val.length < 1) {
+					return;
+				}
+				$.get(
+					"${basePath}/contral/ajax/area?parent="+ val,
+					{},
+					function(data) {
+						if (data.status) {
+							$("select[name=ucity]").empty();
+							var html = '<option value="">全部</option>';
+							for ( var i = 0; i < data.data.length; i++) {
+								html += "<option value=";
+								html+=data.data[i].id;
+								html+=">";
+								html += data.data[i].name;
+								html += "</option>";
+							}
+							$("select[name=ucity]").append(html);
+						}
+					}, 
+					"json"
+				);
+				
+				var cityval = $("select[name=ucity]").val();
+				var countryval = $("select[name=ucountry]").val();
+				var typeval = $("select[name=orgtype]").val();
+				if (cityval.length < 1 || countryval.length < 1 || typeval.length < 1) {
+					return;
+				}
+				querybanks(cityval, countryval, typeval, 0);
+			});
+			
+			$("select[name=ucity]").change(
+				function() {
+					//
+					var val = $(this).val();
+					if (val.length < 1) {
+						return;
+					}
+					$.get(
+						"${basePath}/contral/ajax/area?parent="+ val,
+						{},
+						function(data) {
+							if (data.status) {
+								$("select[name=ucountry]").empty();
+								var html = '<option value="">全部</option>';
+								for ( var i = 0; i < data.data.length; i++) {
+									html += "<option value=";
+									html+=data.data[i].id;
+									html+=">";
+									html += data.data[i].name;
+									html += "</option>";
+								}
+								$("select[name=ucountry]").append(html);
+							}
+						}, 
+						"json"
+					);
+					
+					var cityval = $("select[name=ucity]").val();
+					var countryval = $("select[name=ucountry]").val();
+					var typeval = $("select[name=orgtype]").val();
+					if (cityval.length < 1 || countryval.length < 1 || typeval.length < 1) {
+						return;
+					}
+					querybanks(cityval, countryval, typeval, 0);
+
+				}
+			);
+			
+			$("select[name=ucountry]").change(function() {
+				var cityval = $("select[name=ucity]").val();
+				var countryval = $("select[name=ucountry]").val();
+				var typeval = $("select[name=orgtype]").val();
+				if (cityval.length < 1 || countryval.length < 1 || typeval.length < 1) {
+					return;
+				}
+				querybanks(cityval, countryval, typeval, 0);
+			});
+			
+			$("select[name=orgtype]").change(function() {
+				var cityval = $("select[name=ucity]").val();
+				var countryval = $("select[name=ucountry]").val();
+				var typeval = $("select[name=orgtype]").val();
+				if (cityval.length < 1 || countryval.length < 1 || typeval.length < 1) {
+					return;
+				}
+				querybanks(cityval, countryval, typeval, 0);
+			});
+
+			$("form").ajaxForm({
+				"beforeSubmit" : function() {
+					return queryusers();
+				},
+				"dataType" : "json",
+				"success" : submitNext
+			});
+
+	});
+	
+	
+	function submitNext(data){
+		if(data.status){
+			//
+			if(data.info!=""){
+				$("#tipsshow").html("<strong><font color='red'>数据正在生成中，在生成完成之前请留在当前页面并不要点击其他功能，否则将会导致生成数据不完整！</font></strong>当前已完成：<strong>" + data.info + "%</strong>");
+				$.get(
+					data.data,
+					{},
+					submitNext,
+					"json"
+				);
+			}else{
+				window.location.href=data.data;
+			}
+			
+		}else{
+			$(".btnSubmit").attr('disabled',false);
+			$("#tipsshow").html("");
+			jAlert(data.data);
+		}
+		
+	}
+	
+
+	function querybanks(city, country, parentId, parentNodeId) {
+		if (parentId.length < 1) {
+			return;
+		}
+		$.get(
+			"${basePath}/contral/ajax/bank?city=" + city
+								+ "&conutry=" + country + "&orgtype="
+								+ parentId,
+			{},
+			function(data) {
+				if (data.status) {
+					$("#bank_node_" + parentNodeId).html('');
+					var changehtml = 'onchange="querybanks(\''
+									+ city + '\',\'' + country
+										+ '\',this.value,' + (parentNodeId + 1)
+										+ ')"';
+					if (data.data.length > 0) {
+						if (data.data[0].isleaf == 'YES') {
+							changehtml = '';
+						}
+					}
+					var html = '<select name="ubankNo"  disabled="disabled" '+changehtml+'>';
+					html += '<option value="">全部</option>';
+					for ( var i = 0; i < data.data.length; i++) {
+						html += "<option value=";
+						html+=data.data[i].no;
+						html+=">";
+						html += data.data[i].name;
+						html += "</option>";
+					}
+					html += '</select><div id="bank_node_'
+									+ (parentNodeId + 1) + '"></div>';
+					$("#bank_node_" + parentNodeId).html(html);
+				}
+		}, "json");
+	}
+</script>
+
+<#include "../common/footer.html">
