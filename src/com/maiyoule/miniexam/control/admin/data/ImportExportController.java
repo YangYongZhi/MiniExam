@@ -449,6 +449,7 @@ public class ImportExportController extends C {
                     os.flush();
                 }
             }
+            os.write("到此为止".getBytes(GUIConstants.CHARSET));
             os.flush();
         } catch (IOException e) {
             e.printStackTrace();
