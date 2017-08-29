@@ -1,12 +1,9 @@
 *.class
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
-*.jar
-*.war
-*.ear
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
+WebContent/WEB-INF/classes/
+WebContent/WEB-INF/lib/
+WebRoot/WEB-INF/classes/
+WebRoot/WEB-INF/lib/
+.project
+.settings/
+.classpath
+.svn/
