@@ -47,12 +47,21 @@ import freemarker.template.Configuration;
 import freemarker.template.TemplateModelException;
 
 public class AppConfig extends JFinalConfig {
+
 	private Logger log = Logger.getLogger(AppConfig.class);
 
 	@Override
 	public void configConstant(Constants constants) {
-		// 开启调试模式，正式环境关闭
+
+		/*
+		 * 开启调试模式，正式环境关闭
+		 */
 		constants.setDevMode(true);
+
+		/*
+		 * 目前暂时打开调试模式
+		 */
+		// constants.setDevMode(false);
 
 	}
 
@@ -80,7 +89,7 @@ public class AppConfig extends JFinalConfig {
 			cachedir.mkdirs();
 		}
 		GUIConstants.CACHE_DIR = GUIConstants.WEB_ROOT + "cache";
-		
+
 		System.out.println("Cache dir === " + GUIConstants.CACHE_DIR);
 
 		// 读取用户名
@@ -106,8 +115,8 @@ public class AppConfig extends JFinalConfig {
 		 * /nSdm0CVB0VVWJYv6SfDZxJw6OSU8+6i02ZJkuxQzXpu+GsUKcKOQXUGSPqhOZRWTZOV+
 		 * ahtpJuXW8UO2WjQQf8midsrV7xl5F8aEUUXqVckPZ9kNzjkDyyWRZAgMBAAECgYB780AEc2QRpIFLXCcOjtNEjViLv2FZw4u
 		 * /PZdLfO+
-		 * 0elNZHogdmJKJ8qRS1cKKXbaZRurwUOyCeGe0UqeHnEx4Bakpv7GACTE2bL7OS3Wk9ASQXOrT9NXxfnY3lnNr1GQpqsRppxCYiXJgjBQuX31JEcDDKjkzr7YisffRJV1+gQJBAOXSE/UuzeSeV3PBrn/DbXsb8k9IJFpulmv2Lx6wYLSKDwlz8DZXB39AxvlqBVMkyal8I7FyfsakxdYTDyHBRzsCQQDe1GnMtkRdYC9bTtSx8/KUzDyDg4ALIudQNL2l0mXgVoQUkv93DvmqyGmTlEM9Kpf6Z94vRMaiFXWyS100/9F7AkEAmTHuR9PJP4olNW54CYaV5ih830hxoy5wassSIdzkubQFzgFQsIhW4QanG/8GSaQOIUI08MYnp/aSQd82iQOznQJAGeNXv17VpnuMRPFtqJcM8digly7p62FMunbGKcO97khe4/0IDQ8CVqMeEPVCspKGQaNbnuZApYgUungjBgtKjQJBAJdPB5kt2BXouYjsFIHpul+iiM/wp6h79tF2dn/B/ILIV6mZ2dMoQNr5ZbYZFL5CfYV/GU/l/K+UUWUoQ77df
-		 * H Y =
+		 * 0elNZHogdmJKJ8qRS1cKKXbaZRurwUOyCeGe0UqeHnEx4Bakpv7GACTE2bL7OS3Wk9ASQXOrT9NXxfnY3lnNr1GQpqsRppxCYiXJgjBQuX31JEcDDKjkzr7YisffRJV1+gQJBAOXSE/UuzeSeV3PBrn/DbXsb8k9IJFpulmv2Lx6wYLSKDwlz8DZXB39AxvlqBVMkyal8I7FyfsakxdYTDyHBRzsCQQDe1GnMtkRdYC9bTtSx8/KUzDyDg4ALIudQNL2l0mXgVoQUkv93DvmqyGmTlEM9Kpf6Z94vRMaiFXWyS100/9F7AkEAmTHuR9PJP4olNW54CYaV5ih830hxoy5wassSIdzkubQFzgFQsIhW4QanG/8GSaQOIUI08MYnp/aSQd82iQOznQJAGeNXv17VpnuMRPFtqJcM8digly7p62FMunbGKcO97khe4/0IDQ8CVqMeEPVCspKGQaNbnuZApYgUungjBgtKjQJBAJdPB5kt2BXouYjsFIHpul+iiM/wp6h79tF2dn/B/ILIV6mZ2dMoQNr5ZbYZFL5CfYV/GU/l/K+UUW
+		 * U o Q 7 7 d f H Y =
 		 */
 		// String
 		// privatekey="MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAMgK3kIW2YAnqL/VJZcI40Y1CaPBvzNFbl2pzNEfpFIrOGgBa3/nSdm0CVB0VVWJYv6SfDZxJw6OSU8+6i02ZJkuxQzXpu+GsUKcKOQXUGSPqhOZRWTZOV+ahtpJuXW8UO2WjQQf8midsrV7xl5F8aEUUXqVckPZ9kNzjkDyyWRZAgMBAAECgYB780AEc2QRpIFLXCcOjtNEjViLv2FZw4u/PZdLfO+0elNZHogdmJKJ8qRS1cKKXbaZRurwUOyCeGe0UqeHnEx4Bakpv7GACTE2bL7OS3Wk9ASQXOrT9NXxfnY3lnNr1GQpqsRppxCYiXJgjBQuX31JEcDDKjkzr7YisffRJV1+gQJBAOXSE/UuzeSeV3PBrn/DbXsb8k9IJFpulmv2Lx6wYLSKDwlz8DZXB39AxvlqBVMkyal8I7FyfsakxdYTDyHBRzsCQQDe1GnMtkRdYC9bTtSx8/KUzDyDg4ALIudQNL2l0mXgVoQUkv93DvmqyGmTlEM9Kpf6Z94vRMaiFXWyS100/9F7AkEAmTHuR9PJP4olNW54CYaV5ih830hxoy5wassSIdzkubQFzgFQsIhW4QanG/8GSaQOIUI08MYnp/aSQd82iQOznQJAGeNXv17VpnuMRPFtqJcM8digly7p62FMunbGKcO97khe4/0IDQ8CVqMeEPVCspKGQaNbnuZApYgUungjBgtKjQJBAJdPB5kt2BXouYjsFIHpul+iiM/wp6h79tF2dn/B/ILIV6mZ2dMoQNr5ZbYZFL5CfYV/GU/l/K+UUWUoQ77dfHY= ";
@@ -118,22 +127,21 @@ public class AppConfig extends JFinalConfig {
 			return;
 		}
 		dbuserinfo = dbuserinfo.substring(5);
-		String url = String.format("jdbc:sqlite:%sWEB-INF/final.prop",
-				GUIConstants.WEB_ROOT, dbuserinfo);
+		String url = String.format("jdbc:sqlite:%sWEB-INF/final.prop", GUIConstants.WEB_ROOT, dbuserinfo);
 
 		C3p0Plugin c3p0Plugin = new C3p0Plugin(url, null, dbuserinfo);
 		c3p0Plugin.setDriverClass("org.sqlite.JDBC");
 		plugins.add(c3p0Plugin);
 
-		ActiveRecordPlugin arp = new ActiveRecordPlugin(DbKit.MAIN_CONFIG_NAME,c3p0Plugin);
+		ActiveRecordPlugin arp = new ActiveRecordPlugin(DbKit.MAIN_CONFIG_NAME, c3p0Plugin);
 		plugins.add(arp);
-		
+
 		arp.setDialect(new Sqlite3Dialect());
-		
+
 		// ehcache
 		plugins.add(new EhCachePlugin());
 		arp.setCache(new EhCache());
-		
+
 		arp.addMapping("admin", AdminModel.class);
 		arp.addMapping("library", LibraryModel.class);
 		arp.addMapping("answers", AnswersModel.class);
@@ -152,9 +160,10 @@ public class AppConfig extends JFinalConfig {
 		arp.addMapping("user_type", UserTypeModel.class);
 		arp.addMapping("users_utypes", UsersUtypesModel.class);
 
-		//TODO 暂时不同连DB2数据库
 		if (GUIConstants.APP_MODEL == 0) {
-
+			/*
+			 * 初始化db2数据库
+			 */
 			String db2url = PropHelper.getDb2Config(GUIConstants.WEB_ROOT, "db.url");
 			String db2user = PropHelper.getDb2Config(GUIConstants.WEB_ROOT, "db.user");
 			String db2pwd = PropHelper.getDb2Config(GUIConstants.WEB_ROOT, "db.password");
@@ -162,8 +171,8 @@ public class AppConfig extends JFinalConfig {
 
 			C3p0Plugin db2c3p0 = new C3p0Plugin(db2url, db2user, db2pwd, db2driver);
 			plugins.add(db2c3p0);
-			
-			ActiveRecordPlugin arpdb2=new ActiveRecordPlugin("db2",db2c3p0);
+
+			ActiveRecordPlugin arpdb2 = new ActiveRecordPlugin("db2", db2c3p0);
 			plugins.add(arpdb2);
 			arpdb2.setDialect(new Db2Dialect());
 		}
