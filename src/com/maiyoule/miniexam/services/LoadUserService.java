@@ -217,6 +217,10 @@ public class LoadUserService {
 
             sb.append("insert into users_utypes(cardno,type_id,bank_no,bank_name,bank_path,city,country) values(");
             sb.append("'" + cardno + "',");
+            
+            /*
+             * 如果该用户只要在zx表中对应的记录有数据报送类型，则认为是数据报送用户类型
+             */
             if (this.isDataReportType(cardno, db2usertype)) {
                 sb.append("8,");
             } else {
