@@ -86,7 +86,7 @@ public class LoadUserService {
          * 从db2获取机构类型信息写入sqlite
          */
         List<Object[]> db2orgtype = Db.use("db2").query(
-                String.format("SELECT NO,NAME FROM %sBS_ORG WHERE parentno ='0'",
+                String.format("SELECT NO,NAME FROM %sBS_ORG_EXAM WHERE parentno ='0'",
                         StringHelper.isNullOrEmpty(schame) ? "" : schame + "."));
         List<String> insertOrgTypeBatchSql = new ArrayList<String>();
         StringBuffer sb = new StringBuffer();
@@ -111,7 +111,7 @@ public class LoadUserService {
                                  StringHelper.isNullOrEmpty(schame) ? "" : schame + "."));*/
         List<Object[]> db2bank = Db.use("db2").query(
                 String.format(
-                        "SELECT NO,NAME,PARENTNO,PARENTNAME,PCBNO,PCBNAME,P,Q,R,S FROM %sBS_ORG",
+                        "SELECT NO,NAME,PARENTNO,PARENTNAME,PCBNO,PCBNAME,P,Q,R,S FROM %sBS_ORG_EXAM",
                         StringHelper.isNullOrEmpty(schame) ? "" : schame + "."));
         List<String> insertBankBatchSql = new ArrayList<String>();
         /* for (Object[] bank : db2bank) {
