@@ -180,7 +180,7 @@ public class LoadUserService {
 		List<Object[]> db2allusers = Db
 		        .use("db2")
 		        .query(String
-		                .format("SELECT ID,LOGINID,NAME,CARDTYPE,ORGCODEOFJR,ORGNAME,DEPTNAME,PHONE,USERSTATUS FROM %sBS_USERINFOOFJG ofjg WHERE ofjg.CARDTYPE != '' AND nowuser = '1'",
+		                .format("SELECT ID,LOGINID,NAME,CARDTYPE,ORGCODEOFJR,ORGNAME,DEPTNAME,PHONE,USERSTATUS FROM %sBS_USERINFOOFJG ofjg WHERE ofjg.CARDTYPE != '' AND userstatus = '启用'",
 		                        StringHelper.isNullOrEmpty(schame) ? "" : schame + "."));
 		if (db2allusers == null || db2allusers.size() < 1) {
 			this.updateStatus(SyncUserStatus.STATUS_EMPTY);
@@ -220,7 +220,7 @@ public class LoadUserService {
 			// 在DB2中查询该用户类型记录
 			List<Object[]> db2usertype = Db.use("db2").query(
 			        String.format(
-			                "SELECT ZXUSERTYPE,ZXUSERNAME,ORGCODE,ORGNAME FROM %sBS_USERINFOOFZX WHERE LOGINID='%s'",
+			                "SELECT ZXUSERTYPE,ZXUSERNAME,ORGCODE,ORGNAME FROM %sBS_USERINFOOFZX WHERE LOGINID='%s' AND userstatus = '启用'",
 			                StringHelper.isNullOrEmpty(schame) ? "" : schame + ".", cardno));
 
 			sb.append("insert into users_utypes(cardno,type_id,bank_no,bank_name,bank_path,city,country) values(");
