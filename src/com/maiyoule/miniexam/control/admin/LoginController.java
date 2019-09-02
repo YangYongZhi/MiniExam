@@ -33,8 +33,8 @@ public class LoginController extends Controller {
 			this.renderJson(Ajax.message("请输入正确的密码", "密码"));
 			return;
 		}
-		String chpwd = S.m(upwd); // 获取密码的MD5值
-		if (chpwd == null) {
+		String upwdMd5 = S.m(upwd); // 获取密码的MD5值
+		if (upwdMd5 == null) {
 			this.renderJson(Ajax.message("密码md5解码为空", "帐号"));
 			return;
 		}
@@ -46,16 +46,16 @@ public class LoginController extends Controller {
 			return;
 		}
 		String duname = m.getStr("uname");
+		// The password saved in database.
 		String dpwd = m.getStr("upassword");
-
-		// 解密
-		String udpwd = S.d(dpwd); // 解密得到MD5值
+		// String udpwd = S.d(dpwd); // decrypt
+		String udpwd = dpwd;
 		if (udpwd == null) {
 			this.renderJson(Ajax.message("解密数据库密码为空", "帐号"));
 			return;
 		}
 
-		if (!chpwd.equals(udpwd)) {
+		if (!upwdMd5.equals(udpwd)) {
 			this.renderJson(Ajax.message("密码不匹配", "帐号"));
 			return;
 		}
@@ -66,65 +66,7 @@ public class LoginController extends Controller {
 		this.setSessionAttr("ADMINI", user);
 
 		// 更新密码
-		if (m.set("upassword", S.e(chpwd)).update()) {
-			this.renderJson(Ajax
-			        .message(this.getRequest().getAttribute(GUIConstants.BASEPATH) + "/contral", "成功", true));
-		} else {
-			this.renderJson(Ajax
-			        .message(this.getRequest().getAttribute(GUIConstants.BASEPATH) + "/contral", "成功", true));
-		}
-
-	}
-
-	/**
-	 * 管理员登录 For test
-	 */
-	public void _dologin() {
-		String uname = this.getPara("username");
-		String upwd = this.getPara("password");
-		if (uname == null || uname.length() < 1) {
-			this.renderJson(Ajax.message("请输入正确的帐号", "帐号"));
-			return;
-		}
-
-		if (upwd == null || upwd.length() < 1) {
-			this.renderJson(Ajax.message("请输入正确的密码", "密码"));
-			return;
-		}
-		String chpwd = S.m(upwd); // 获取密码的MD5值
-		if (chpwd == null) {
-			this.renderJson(Ajax.message("密码md5解码为空", "帐号"));
-			return;
-		}
-		// 验证密码
-		AdminModel model = new AdminModel();
-		AdminModel m = model.findFirst(String.format("select * from admin where uname='%s'", uname));
-		if (m == null) {
-			this.renderJson(Ajax.message("不能找到用户", "帐号"));
-			return;
-		}
-		String duname = m.getStr("uname");
-		String dpwd = m.getStr("upassword");
-
-		// 解密
-		String udpwd = S.d(dpwd); // 解密得到MD5值
-		if (udpwd == null) {
-			this.renderJson(Ajax.message("解密数据库密码为空", "帐号"));
-			return;
-		}
-
-		// if(!chpwd.equals(udpwd)){
-		// this.renderJson(Ajax.message("密码不匹配", "帐号"));
-		// return;
-		// }
-
-		// 登录成功
-		AdminUser user = new AdminUser();
-		user.setName(duname);
-		this.setSessionAttr("ADMINI", user);
-
-		// 更新密码
-		if (m.set("upassword", S.e(chpwd)).update()) {
+		if (m.set("upassword", upwdMd5).update()) {
 			this.renderJson(Ajax
 			        .message(this.getRequest().getAttribute(GUIConstants.BASEPATH) + "/contral", "成功", true));
 		} else {

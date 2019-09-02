@@ -102,15 +102,15 @@ public class ImportExportController extends C {
 		}
 
 		String oldchpwd = S.m(oldpass);
-		String conrrentdpwd = S.d(dpwd);
+		String conrrentdpwd = dpwd;
 		if (!StringUtils.equals(oldchpwd, conrrentdpwd)) {
 			return this.error("旧密码输入错误");
 		}
 
 		String newMPass = S.m(passagain);
-		String newEPass = S.e(newMPass);
+		// String newEPass = S.e(newMPass);
 		// 更新密码
-		if (m.set("upassword", newEPass).update()) {
+		if (m.set("upassword", newMPass).update()) {
 			return this.success(this.getAttr("basePath").toString() + "/contral/data/modifypass");
 		} else {
 			return this.error("修改密码发生错误");
