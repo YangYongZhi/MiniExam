@@ -1,5 +1,6 @@
 package com.maiyoule.miniexam.control.admin.results;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.xmlbeans.impl.util.Base64;
@@ -106,6 +107,17 @@ public class ScoreController extends C {
 		int pageNum=this.getParaToInt("page", 1);
 		
 		Page<AnswersModel> answers=AnswersModel.dao.paginate(pageNum, GUIConstants.PAGE_SIZE, "select *", "from answers where exam_id="+id);
+		
+		// Fill the null status.
+		List<AnswersModel> answersData= answers.getList();
+		for (Iterator<AnswersModel>  iterator = answersData.iterator(); iterator.hasNext();) {
+	        AnswersModel answersModel = iterator.next();
+	        if(answersModel.get("status")==null){
+	        	// If there is a null status of this answer, we can consider as wrong.
+	        	answersModel.set("status", 0);
+	        }
+        }
+		
 		this.setAttr("lists", answers);
 		
 		this.setAttr("queryString", "id="+id);
