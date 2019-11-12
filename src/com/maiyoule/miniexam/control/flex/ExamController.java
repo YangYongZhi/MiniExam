@@ -10,7 +10,6 @@ import com.alibaba.fastjson.JSON;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.ehcache.CacheKit;
 import com.maiyoule.miniexam.control.admin.C;
-import com.maiyoule.miniexam.control.admin.ConfigController;
 import com.maiyoule.miniexam.entity.FlexAnswerItem;
 import com.maiyoule.miniexam.entity.FlexQuestion;
 import com.maiyoule.miniexam.entity.FlexScore;
@@ -179,6 +178,10 @@ public class ExamController extends C {
                 paper.getInt("muti_score"), paper.getInt("juge_score"));
 
         Map<Integer, Short> resultlist = erc.getLastResultList();
+    	if (log.isInfoEnabled()) {
+			log.info("resultlist : " + resultlist);
+		}
+        
         String label = "不合格";
         if (score >= paper.getInt("min_score")) {
             label = "合格";
