@@ -3,8 +3,6 @@ package com.maiyoule.miniexam.control.admin.results;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.xmlbeans.impl.util.Base64;
 
 import com.jfinal.plugin.activerecord.Page;
@@ -13,7 +11,6 @@ import com.maiyoule.miniexam.control.admin.C;
 import com.maiyoule.miniexam.model.AnswersModel;
 import com.maiyoule.miniexam.model.ExamsModel;
 import com.maiyoule.miniexam.model.LayoutsModel;
-import com.maiyoule.miniexam.model.QuestionModel;
 import com.maiyoule.miniexam.utils.ExamlayoutUtil;
 import com.maiyoule.miniexam.utils.StringHelper;
 
@@ -104,125 +101,7 @@ public class ScoreController extends C {
 		}
 	}
 
-	/**
-	 * According to answer details to re calculate the score.
-	 * 
-	 * @return
-	 */
 	public String answer() {
-		// judge();
-		calculateScore();
-
-		return this.ajaxMessage("data", "提交成功", true);
-	}
-
-	private void judge() {
-
-		List<AnswersModel> am = AnswersModel.dao.find("select * from answers");
-
-		for (Iterator<AnswersModel> iterator = am.iterator(); iterator.hasNext();) {
-			AnswersModel a = iterator.next();
-			QuestionModel q = QuestionModel.dao.findById(a.get("question_id"));
-
-			if (q == null) {
-				a.set("status", 0);
-				a.save();
-				continue;
-			}
-
-			/*
-			 * 计算单选题得分
-			 */
-			if (q.get("type").equals(QuestionModel.TYPE_SINGLE)) {
-				if (q.get("answer").equals(a.get("label"))) {
-					// 答案正确
-					// this.score += this.scoresingle;
-					a.set("status", 1);
-				} else {
-					a.set("status", 0);
-				}
-			} else if (q.get("type").equals(QuestionModel.TYPE_MUTI)) {
-				/*
-				 * 计算多选题得分
-				 */
-				String[] useranswers = StringUtils.split(a.getStr("label"), ";");
-				String[] trueanswers = StringUtils.split(q.getStr("answer"), GUIConstants.STRING_SPLITE);
-				boolean isanswertrue = true;
-				if (useranswers.length < trueanswers.length) {
-					isanswertrue = false;
-				} else {
-					for (String tmpuseranswer : useranswers) {
-						if (!ArrayUtils.contains(trueanswers, tmpuseranswer)) {
-							isanswertrue = false;
-							break;
-						}
-					}
-				}
-				if (isanswertrue) {
-					a.set("status", 1);
-				} else {
-					a.set("status", 0);
-				}
-			} else if (q.get("type").equals(QuestionModel.TYPE_JUDGE)) {
-				/*
-				 * 计算判断题得分
-				 */
-				String userAnswer = a.getStr("label"); // 为空表示未作答，直接不计分
-				if (StringHelper.isNullOrEmpty(userAnswer)) {
-					// this.resultlist.put(fq.getId(), (short) 0);
-				} else {
-					String checkstr = userAnswer.equals("yes") ? "1" : "0";
-					if (q.getStr("answer").equals(checkstr)) {
-						a.set("status", 1);
-					} else {
-						a.set("status", 0);
-					}
-				}
-			}
-
-			System.out.println("calculating answer :" + a.get("id"));
-			a.update();
-
-		}
-
-	}
-
-	private void calculateScore() {
-		List<ExamsModel> exams = ExamsModel.dao.find("select * from exams " + "where id = 20859");
-
-		for (Iterator<ExamsModel> iterator = exams.iterator(); iterator.hasNext();) {
-			ExamsModel exam = iterator.next();
-
-			List<AnswersModel> answers = AnswersModel.dao.find("select * from answers where exam_id = "
-			        + exam.getInt("id"));
-
-			if (answers == null || answers.size() <= 0) {
-				System.out.println("The anserw of this exam is null:" + exam.get("id"));
-				continue;
-			}
-
-			int score = 0;
-			for (Iterator<AnswersModel> iterator2 = answers.iterator(); iterator2.hasNext();) {
-				AnswersModel a = iterator2.next();
-				if (a.getInt("status") != null && a.getInt("status") == 1) {
-					QuestionModel q = QuestionModel.dao.findById(a.get("question_id"));
-					if (q.get("type").equals(QuestionModel.TYPE_SINGLE)) {
-						score += 2;
-					} else if (q.get("type").equals(QuestionModel.TYPE_MUTI)) {
-						score += 2;
-					} else if (q.get("type").equals(QuestionModel.TYPE_JUDGE)) {
-						score += 1;
-					}
-				}
-			}
-
-			exam.set("score", score);
-			System.out.println("calculating exam :" + exam.get("id"));
-			exam.update();
-		}
-	}
-
-	public String _answer() {
 		int id = this.getParaToInt("id", 0);
 		if (id < 1) {
 			return this.error("无效请求");

@@ -41,6 +41,25 @@
 						</tr>
 					</table>
 				</fieldset> 
+				<br/>
+				<br/>
+				<fieldset>
+					<legend>重算成绩</legend>
+					<table>
+						<tr>
+							<td>
+								<strong><font color='red'>
+									在重新计算成绩时请留在当前页面并不要点击其他功能，否则将会导致数据不完整！重新计算成绩是对系统中所有的成绩进行重新计算，比较耗时，请耐心等待。
+								</font></strong>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input type="button" id="btnRecalculate" class="btn blue" value="重算成绩"/>
+							</td>
+						</tr>
+					</table>
+				</fieldset> 
 			</td>
 		</tr>
 
@@ -79,6 +98,22 @@
 				});
 			});
 		});
+		
+		$("#btnRecalculate").click(function(){
+			jConfirm("对当前所有提交的答案正确性进行重新判断，并且进行重新计算分数，请确保无其它用户使用该程序，确定开始计算吗？计算非常耗时，请等待，任务已经提交服务器执行，请不要重复提交请求！","提示",function(){
+				$.ajax({
+					"url":"${basePath}/contral/config/recalculate",
+					"dataType":"json",
+					"error" : function() {
+						jAlert("重新计算成绩失败，请稍后再试！");
+					},
+					"success":function(data){
+						jAlert(data.data,data.info);
+					}
+				});
+			});
+		});
+		
 	});
 	
 </script>
