@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import com.alibaba.fastjson.JSON;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.ehcache.CacheKit;
 import com.maiyoule.miniexam.control.admin.C;
+import com.maiyoule.miniexam.control.admin.ConfigController;
 import com.maiyoule.miniexam.entity.FlexAnswerItem;
 import com.maiyoule.miniexam.entity.FlexQuestion;
 import com.maiyoule.miniexam.entity.FlexScore;
@@ -21,6 +24,7 @@ import com.maiyoule.miniexam.utils.ExamlayoutUtil;
 import com.maiyoule.miniexam.utils.StringHelper;
 
 public class ExamController extends C {
+	private Logger log = Logger.getLogger(ExamController.class);
     private static final String CK = "exams";
 
     /**
@@ -209,6 +213,11 @@ public class ExamController extends C {
             sb.append("'");
             sb.append(fai.getValue());//用户的回答
             sb.append("')");
+            
+        	if (log.isInfoEnabled()) {
+    			log.info("Insert answers SQL : " + sb);
+    		}
+            
             answersqlbath.add(sb.toString());
 
             if (answersqlbath.size() > 30) {
